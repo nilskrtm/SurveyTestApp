@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SurveyTestApp</string>
+    <string name="sample_device_admin">SurveyTestAppDeviceAdmin</string>
+    <string name="sample_device_admin_description">SurveyTestAppDeviceAdminDescription</string>
+</resources>
