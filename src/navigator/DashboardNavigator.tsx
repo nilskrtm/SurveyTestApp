@@ -15,7 +15,7 @@ import TimeUtil from '../util/TimeUtil';
 import {Text} from 'react-native';
 import VotingsScreen from '../screens/dashboard/VotingsScreen';
 
-function HeaderRight(props: any): JSX.Element {
+function HeaderRight(props: any): React.JSX.Element {
   const [dateString, setDateString] = useState(
     TimeUtil.getDateAsString(new Date()),
   );
@@ -31,7 +31,7 @@ function HeaderRight(props: any): JSX.Element {
   return <Text style={props.style}>{dateString}</Text>;
 }
 
-function DashboardNavigator(): JSX.Element {
+function DashboardNavigator(): React.JSX.Element {
   const Tab = createBottomTabNavigator();
 
   const isDeviceOwner: boolean = useAppSelector(selectIsDeviceOwner);

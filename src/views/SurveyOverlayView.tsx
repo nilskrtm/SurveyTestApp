@@ -19,7 +19,7 @@ type SurveyOverlayProps = {
   onPinSuccess: () => void;
 };
 
-function SurveyOverlay({onPinSuccess}: SurveyOverlayProps): JSX.Element {
+function SurveyOverlay({onPinSuccess}: SurveyOverlayProps): React.JSX.Element {
   const [pinText, setPinText] = useState<string>('');
   const [pinDialogOpen, setPinDialogOpen] = useState<boolean>(false);
   const [pinDialogTimer, setPinDialogTimer] = useState<any>(null);

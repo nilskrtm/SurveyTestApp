@@ -24,7 +24,7 @@ import {Collection, CollectionChangeSet} from 'realm';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 import window from '@react-navigation/native/lib/typescript/src/__mocks__/window';
 
-function OverviewScreen(): JSX.Element {
+function OverviewScreen(): React.JSX.Element {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const votingSyncJobs = useVotingQuery(VotingSyncJob);

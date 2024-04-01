@@ -3,11 +3,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
-        android:name="android.permission.MANAGE_DEVICE_ADMINS"
-        tools:ignore="ProtectedPermissions" />
+            android:name="android.permission.MANAGE_DEVICE_ADMINS"
+            tools:ignore="ProtectedPermissions" />
     <uses-permission
-        android:name="android.permission.BIND_DEVICE_ADMIN"
-        tools:ignore="ProtectedPermissions" />
+            android:name="android.permission.BIND_DEVICE_ADMIN"
+            tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
@@ -36,20 +36,20 @@
       </activity>
 
         <receiver
-            android:name=".CustomDeviceAdmin"
-            android:label="@string/sample_device_admin"
-            android:description="@string/sample_device_admin_description"
-            android:permission="android.permission.BIND_DEVICE_ADMIN"
-            android:exported="false">
+          android:name=".CustomDeviceAdmin"
+          android:label="@string/sample_device_admin"
+          android:description="@string/sample_device_admin_description"
+          android:permission="android.permission.BIND_DEVICE_ADMIN"
+          android:exported="true">
             <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/custom_admin" />
-            <intent-filter>
+              android:name="android.app.device_admin"
+              android:resource="@xml/custom_admin" />
+              <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
                 <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
                 <action android:name="android.app.action.LOCK_TASK_ENTERING" />
                 <action android:name="android.app.action.LOCK_TASK_EXITING" />
-            </intent-filter>
+              </intent-filter>
         </receiver>
     </application>
 </manifest>

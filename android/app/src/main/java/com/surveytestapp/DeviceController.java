@@ -47,7 +47,7 @@ public class DeviceController {
 
             try {
                 DevicePolicyManager devicePolicyManager = getDevicePolicyManager(activity);
-                ComponentName adminComponent = CustomDeviceAdmin.getComponentName(activity);
+                ComponentName adminComponent = CustomDeviceAdmin.Companion.getComponentName(activity);
 
                 if (devicePolicyManager != null) {
                     if (devicePolicyManager.isDeviceOwnerApp(activity.getPackageName())) {
@@ -102,7 +102,7 @@ public class DeviceController {
 
             try {
                 DevicePolicyManager devicePolicyManager = getDevicePolicyManager(activity);
-                ComponentName adminComponent = CustomDeviceAdmin.getComponentName(activity);
+                ComponentName adminComponent = CustomDeviceAdmin.Companion.getComponentName(activity);
 
                 if (devicePolicyManager != null) {
                     if (devicePolicyManager.isDeviceOwnerApp(activity.getPackageName())) {

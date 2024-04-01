@@ -13,7 +13,7 @@ import {useAppDispatch} from '../redux/hooks';
 import {setIsSurveyTestMode} from '../redux/generalSlice';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
 
-function BootScreen(): JSX.Element {
+function BootScreen(): React.JSX.Element {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 

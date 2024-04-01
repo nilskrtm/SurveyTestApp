@@ -33,7 +33,7 @@ type ChooseSurveySubmitScreenData = {
   selectErrorText: string;
 };
 
-function ChooseSurveySubmitScreen(): JSX.Element {
+function ChooseSurveySubmitScreen(): React.JSX.Element {
   const authAxios = useAuthAxios();
   const navigation = useNavigation();
   const route = useRoute();
@@ -115,7 +115,8 @@ function ChooseSurveySubmitScreen(): JSX.Element {
               survey: survey,
             });
           })
-          .catch(() => {
+          .catch(e => {
+            console.log(JSON.stringify(e));
             setState({
               ...state,
               loading: false,
@@ -123,7 +124,8 @@ function ChooseSurveySubmitScreen(): JSX.Element {
             });
           });
       })
-      .catch(() => {
+      .catch(e => {
+        console.log(JSON.stringify(e));
         setState({
           ...state,
           loading: false,

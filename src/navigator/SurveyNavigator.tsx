@@ -5,7 +5,7 @@ import SurveyQuestionScreen from '../screens/survey/SurveyQuestionScreen';
 import SurveyEndScreen from '../screens/survey/SurveyEndScreen';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
 
-function SurveyNavigator(): JSX.Element {
+function SurveyNavigator(): React.JSX.Element {
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {

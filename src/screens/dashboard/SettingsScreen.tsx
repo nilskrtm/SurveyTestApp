@@ -16,7 +16,7 @@ import {
   selectIsDeviceOwner,
 } from '../../redux/generalSlice';
 
-function SettingsScreen(): JSX.Element {
+function SettingsScreen(): React.JSX.Element {
   const serverAddressSettingBox = useRef<any>();
   const usernameSettingBox = useRef<any>();
   const accessKeySettingBox = useRef<any>();

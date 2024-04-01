@@ -29,7 +29,7 @@ type VotingsScreenData = {
   data: any[];
 };
 
-function VotingsScreen(): JSX.Element {
+function VotingsScreen(): React.JSX.Element {
   const votingSyncJobs = useVotingQuery(VotingSyncJob);
   const syncedVotings = useVotingQuery(SyncedVoting);
 

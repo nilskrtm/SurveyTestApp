@@ -14,7 +14,6 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 type SettingCategoryProps = {
   label: string;
 };
-
 export class SettingCategory extends React.Component<SettingCategoryProps> {
   render() {
     return (

@@ -4,7 +4,7 @@ import uuid from 'react-native-uuid';
 import WebUtil from '../util/WebUtil';
 import axios, {AxiosInstance, CancelTokenSource} from 'axios';
 import {SyncedVoting, VotingSyncJob} from './VotingModels';
-import {SortDescriptor} from 'realm';
+import {SortDescriptor, Realm} from 'realm';
 
 type VotingSyncQueueCallbacks = {
   [key in CallbackName]: CallbackObject[];
@@ -226,8 +226,8 @@ class VotingSyncQueue {
     return jobs;
   }
 
-  getConcurrentJobs(tryFailed: boolean): (VotingSyncJob & Realm.Object)[] {
-    let concurrentJobs: (VotingSyncJob & Realm.Object)[] = [];
+  getConcurrentJobs(tryFailed: boolean): VotingSyncJob[] {
+    let concurrentJobs: VotingSyncJob[] = [];
 
     this.getRealm().write(() => {
       let nextJob: VotingSyncJob | null = null;
@@ -269,8 +269,10 @@ class VotingSyncQueue {
           .filtered(allRelatedJobsQuery)
           .sorted(sortingArray);
 
-        let jobsToMarkActive: (VotingSyncJob & Realm.Object)[] | void[] =
-          allRelatedJobs.slice(0, concurrency);
+        let jobsToMarkActive: VotingSyncJob[] | void[] = allRelatedJobs.slice(
+          0,
+          concurrency,
+        );
         const concurrentJobIds: string[] = jobsToMarkActive.map(job => job._id);
 
         jobsToMarkActive = jobsToMarkActive.map(job => {

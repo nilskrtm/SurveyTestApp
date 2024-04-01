@@ -12,7 +12,7 @@ import DeviceControllerProvider from './src/provider/DeviceControllerProvider';
 import VotingSyncProvider from './src/provider/VotingSyncProvider';
 import {VotingRealmProvider} from './src/votings/VotingModels';
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {

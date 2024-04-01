@@ -20,7 +20,7 @@ type ChooseSurveyScreenData = {
   surveys: any[];
 };
 
-function ChooseSurveyScreen(): JSX.Element {
+function ChooseSurveyScreen(): React.JSX.Element {
   const authAxios = useAuthAxios();
   const navigation = useNavigation();
   const route = useRoute();

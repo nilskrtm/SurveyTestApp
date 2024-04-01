@@ -12,7 +12,7 @@ import SurveyOverlay from '../../views/SurveyOverlayView';
 import {useStorage} from '../../../App';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function SurveyStartScreen(): JSX.Element {
+function SurveyStartScreen(): React.JSX.Element {
   const navigation = useNavigation();
 
   const [selectedSurvey] = useStorage<any>('selected_survey', {});

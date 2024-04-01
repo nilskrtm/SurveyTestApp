@@ -13,7 +13,7 @@ import {selectIsSurveyTestMode} from '../../redux/generalSlice';
 import {useStorage} from '../../../App';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function SurveyEndScreen(): JSX.Element {
+function SurveyEndScreen(): React.JSX.Element {
   const navigation = useNavigation();
   const route = useRoute();
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);

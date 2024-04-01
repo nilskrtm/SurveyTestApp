@@ -14,7 +14,7 @@ import {useStorage} from '../../../App';
 import FileUtil from '../../util/FileUtil';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function SurveyQuestionScreen(): JSX.Element {
+function SurveyQuestionScreen(): React.JSX.Element {
   const navigation = useNavigation();
 
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;

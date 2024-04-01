@@ -3,7 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChooseSurveyScreen from '../screens/dashboard/choose-survey/ChooseSurveyScreen';
 import ChooseSurveySubmitScreen from '../screens/dashboard/choose-survey/ChooseSurveySubmitScreen';
 
-function ChooseSurveyNavigator(): JSX.Element {
+function ChooseSurveyNavigator(): React.JSX.Element {
   const Stack = createNativeStackNavigator();
   //const navigation = useNavigation();
 
