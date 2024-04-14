@@ -49,14 +49,17 @@ function ChooseSurveyScreen(): React.JSX.Element {
     authAxios
       .get(`/surveys?page=${newPagingOptions.page}`)
       .then(response => {
+        console.log(response);
         setState({
           ...state,
           loading: false,
+          error: '',
           surveys: response.data.surveys,
           pagingOptions: response.data.paging,
         });
       })
-      .catch(() => {
+      .catch(e => {
+        console.log(JSON.stringify(e));
         setState({
           ...state,
           loading: false,
