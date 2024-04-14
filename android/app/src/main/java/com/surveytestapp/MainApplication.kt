@@ -1,6 +1,7 @@
 package com.surveytestapp
 
 import android.app.Application
+import android.os.Build
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -41,6 +42,8 @@ class MainApplication : Application(), ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
     }
-    ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) { // FIX: make flipper work on Android 5.0 (Lollipop)
+      ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
+    }  // FIX: make flipper work on Android 5.0 (Lollipop)
   }
 }
