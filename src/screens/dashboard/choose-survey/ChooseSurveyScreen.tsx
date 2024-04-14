@@ -58,8 +58,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
           pagingOptions: response.data.paging,
         });
       })
-      .catch(e => {
-        console.log(JSON.stringify(e));
+      .catch(() => {
         setState({
           ...state,
           loading: false,
