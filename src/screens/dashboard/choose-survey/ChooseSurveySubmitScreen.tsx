@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -7,17 +7,12 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
-  View,
+  View
 } from 'react-native';
-import {
-  CommonActions,
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import {useStorage} from '../../../../App';
-import {useAuthAxios} from '../../../util/WebUtil';
+import { useStorage } from '../../../../App';
+import { useAuthAxios } from '../../../util/WebUtil';
 import DownloadSurveyJob from '../../../jobs/DownloadSurveyJob';
 import TimeUtil from '../../../util/TimeUtil';
 import Dialog from 'react-native-dialog';
@@ -42,10 +37,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
   const [username] = useStorage<string>('username', '');
   const [accessKey] = useStorage<string>('access_key', '');
   const [, setSelectedSurvey] = useStorage<any>('selected_survey', {});
-  const [, setSelectedSurveyValid] = useStorage<boolean>(
-    'selected_survey_valid',
-    false,
-  );
+  const [, setSelectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
   const [, setAnswerPicturePaths] = useStorage<any>('answer_picture_paths', {});
 
   const [state, setState] = useState<ChooseSurveySubmitScreenData>({
@@ -56,10 +48,9 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
     survey: null,
     isSelecting: false,
     selectText: '',
-    selectErrorText: '',
+    selectErrorText: ''
   });
-  const [selectSurveyDialogOpen, setSelectSurveyDialogOpen] =
-    useState<boolean>(false);
+  const [selectSurveyDialogOpen, setSelectSurveyDialogOpen] = useState<boolean>(false);
 
   const hasWarning = !serverAddress || !username || !accessKey;
 
@@ -67,14 +58,14 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
     const parentNavigator = navigation.getParent();
 
     if (parentNavigator) {
-      parentNavigator.setOptions({headerLeft: () => leftHeader()});
+      parentNavigator.setOptions({ headerLeft: () => leftHeader() });
     }
 
     authAxios
       .get(`/surveys/${state.surveyId}`)
-      .then(response => {
+      .then((response) => {
         const survey: any = response.data.survey;
-        const answerPictureUrls: {[key: string]: any} = {};
+        const answerPictureUrls: { [key: string]: any } = {};
         const answerPictureUrlPromises: Promise<any>[] = [];
 
         survey.questions.forEach((questionObject: any) => {
@@ -85,68 +76,61 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
           });
         });
 
-        for (let i in Object.keys(answerPictureUrls)) {
+        for (const i in Object.keys(answerPictureUrls)) {
           answerPictureUrlPromises[i] = authAxios.get(
-            '/answer-pictures/' + Object.keys(answerPictureUrls)[i],
+            '/answer-pictures/' + Object.keys(answerPictureUrls)[i]
           );
         }
 
         Promise.all(answerPictureUrlPromises)
-          .then(responses => {
-            for (let i in responses) {
+          .then((responses) => {
+            for (const i in responses) {
               const answerPictureObject: any = responses[i].data.answerPicture;
 
-              answerPictureUrls[answerPictureObject._id] =
-                answerPictureObject.url;
+              answerPictureUrls[answerPictureObject._id] = answerPictureObject.url;
             }
 
             survey.questions.forEach((questionObject: any) => {
-              questionObject.answerOptions.forEach(
-                (answerOptionObject: any) => {
-                  answerOptionObject.picture.url =
-                    answerPictureUrls[answerOptionObject.picture._id];
-                },
-              );
+              questionObject.answerOptions.forEach((answerOptionObject: any) => {
+                answerOptionObject.picture.url = answerPictureUrls[answerOptionObject.picture._id];
+              });
             });
 
             setState({
               ...state,
               loading: false,
-              survey: survey,
+              survey: survey
             });
           })
-          .catch(e => {
+          .catch((e) => {
             console.log(JSON.stringify(e));
             setState({
               ...state,
               loading: false,
-              error: 'Fehler beim Laden der Umfrage!',
+              error: 'Fehler beim Laden der Umfrage!'
             });
           });
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(JSON.stringify(e));
         setState({
           ...state,
           loading: false,
-          error: 'Fehler beim Laden der Umfrage!',
+          error: 'Fehler beim Laden der Umfrage!'
         });
       });
   };
 
   const leftHeader = () => {
     return (
-      <TouchableHighlight
-        activeOpacity={0.6}
-        underlayColor="#6404ec"
-        onPress={goBack}>
+      <TouchableHighlight activeOpacity={0.6} underlayColor="#6404ec" onPress={goBack}>
         <View
           style={{
             height: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            paddingLeft: 14,
+            paddingLeft: 14
           }}>
           <IonIcons name="chevron-back-outline" size={28} color="#ffffff" />
         </View>
@@ -167,11 +151,11 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
                 name: 'ChooseSurveyScreen',
                 params: {
                   // @ts-ignore
-                  usePagingOptions: route.params.lastPagingOptions,
-                },
-              },
-            ],
-          }),
+                  usePagingOptions: route.params.lastPagingOptions
+                }
+              }
+            ]
+          })
         );
 
         return;
@@ -182,10 +166,10 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
           index: 2,
           routes: [
             {
-              name: 'ChooseSurveyScreen',
-            },
-          ],
-        }),
+              name: 'ChooseSurveyScreen'
+            }
+          ]
+        })
       );
     }
   };
@@ -202,7 +186,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
         ...state,
         selectText: message,
         isSelecting: true,
-        selectErrorText: '',
+        selectErrorText: ''
       });
     });
 
@@ -210,7 +194,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
       ...state,
       isSelecting: true,
       selectText: 'Die Umfrage wird heruntergeladen...',
-      selectErrorText: '',
+      selectErrorText: ''
     });
 
     downloadSurveyJob
@@ -220,7 +204,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
           ...state,
           isSelecting: false,
           selectText: 'Download beendet.',
-          selectErrorText: '',
+          selectErrorText: ''
         });
 
         setSelectedSurveyValid(false);
@@ -233,10 +217,10 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
             index: 1,
             routes: [
               {
-                name: 'OverviewScreen',
-              },
-            ],
-          }),
+                name: 'OverviewScreen'
+              }
+            ]
+          })
         );
       })
       .catch((error: any) => {
@@ -244,7 +228,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
           setState({
             ...state,
             isSelecting: false,
-            selectErrorText: error.message,
+            selectErrorText: error.message
           });
 
           if (!error.oldRestorable) {
@@ -255,7 +239,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
           setState({
             ...state,
             isSelecting: false,
-            selectErrorText: 'Fehler beim Auswählen der Umfrage!',
+            selectErrorText: 'Fehler beim Auswählen der Umfrage!'
           });
 
           setSelectedSurveyValid(false);
@@ -288,14 +272,11 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
 
         return true;
       };
-      const customBackHandler = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
+      const customBackHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => customBackHandler.remove();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [])
   );
 
   return (
@@ -341,35 +322,31 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
               </View>
               <View style={styles.surveyBadgeContainer}>
                 {state.survey.draft && (
-                  <View style={[styles.badge, {backgroundColor: '#fb923c'}]}>
+                  <View style={[styles.badge, { backgroundColor: '#fb923c' }]}>
                     <Text style={styles.badgeText}>Entwurf</Text>
                   </View>
                 )}
                 {!state.survey.draft &&
-                  new Date(state.survey.startDate).getTime() >
-                    new Date().getTime() && (
-                    <View style={[styles.badge, {backgroundColor: '#22c55e'}]}>
+                  new Date(state.survey.startDate).getTime() > new Date().getTime() && (
+                    <View style={[styles.badge, { backgroundColor: '#22c55e' }]}>
                       <Text style={styles.badgeText}>Bereit</Text>
                     </View>
                   )}
                 {!state.survey.draft &&
-                  new Date(state.survey.startDate).getTime() <=
-                    new Date().getTime() &&
-                  new Date(state.survey.endDate).getTime() >
-                    new Date().getTime() && (
-                    <View style={[styles.badge, {backgroundColor: '#6404ec'}]}>
+                  new Date(state.survey.startDate).getTime() <= new Date().getTime() &&
+                  new Date(state.survey.endDate).getTime() > new Date().getTime() && (
+                    <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
                       <Text style={styles.badgeText}>Aktiv</Text>
                     </View>
                   )}
                 {!state.survey.draft &&
-                  new Date(state.survey.endDate).getTime() <
-                    new Date().getTime() && (
-                    <View style={[styles.badge, {backgroundColor: '#ef4444'}]}>
+                  new Date(state.survey.endDate).getTime() < new Date().getTime() && (
+                    <View style={[styles.badge, { backgroundColor: '#ef4444' }]}>
                       <Text style={styles.badgeText}>Beendet</Text>
                     </View>
                   )}
                 {state.survey.archived && (
-                  <View style={[styles.badge, {backgroundColor: '#9a3412'}]}>
+                  <View style={[styles.badge, { backgroundColor: '#9a3412' }]}>
                     <Text style={styles.badgeText}>Archiv</Text>
                   </View>
                 )}
@@ -393,22 +370,16 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
               </Text>
             </View>
             {state.survey.questions.map((question: any, index: number) => (
-              <View
-                key={'question' + question._id}
-                style={styles.questionContainer}>
+              <View key={'question' + question._id} style={styles.questionContainer}>
                 <Text style={styles.question} numberOfLines={1}>
-                  <Text style={{fontWeight: '500'}}>Frage {index + 1} - </Text>
+                  <Text style={{ fontWeight: '500' }}>Frage {index + 1} - </Text>
                   {question.question}
                 </Text>
                 <Text style={styles.questionMeta} numberOfLines={1}>
-                  <Text style={{fontWeight: '500'}}>Zeitbegrenzung: </Text>
-                  {question.timeout === 0
-                    ? 'keine'
-                    : question.timeout + ' Sekunden'}
+                  <Text style={{ fontWeight: '500' }}>Zeitbegrenzung: </Text>
+                  {question.timeout === 0 ? 'keine' : question.timeout + ' Sekunden'}
                   {'        '}
-                  <Text style={{fontWeight: '500'}}>
-                    Antwortmöglichkeiten:{' '}
-                  </Text>
+                  <Text style={{ fontWeight: '500' }}>Antwortmöglichkeiten: </Text>
                   {question.answerOptions.length}
                 </Text>
                 {question.answerOptions.length > 0 && (
@@ -418,18 +389,16 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
                         if (answerOptionObject.picture.url) {
                           return (
                             <Image
-                              key={
-                                answerOptionObject._id + '-' + answerOptionIndex
-                              }
+                              key={answerOptionObject._id + '-' + answerOptionIndex}
                               style={styles.answerPicture}
                               resizeMode="contain"
                               source={{
-                                uri: answerOptionObject.picture.url,
+                                uri: answerOptionObject.picture.url
                               }}
                             />
                           );
                         }
-                      },
+                      }
                     )}
                   </View>
                 )}
@@ -438,9 +407,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
           </ScrollView>
           <View style={styles.selectContainer}>
             <View style={styles.selectInfoBox}>
-              {state.isSelecting && (
-                <ActivityIndicator size="small" color="#6404ec" />
-              )}
+              {state.isSelecting && <ActivityIndicator size="small" color="#6404ec" />}
               {!state.selectErrorText ? (
                 <Text style={styles.selectInfoText} numberOfLines={1}>
                   {state.selectText}
@@ -465,7 +432,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
                 <Text
                   style={[
                     styles.selectText,
-                    {color: !state.isSelecting ? '#6404ec' : '#505050'},
+                    { color: !state.isSelecting ? '#6404ec' : '#505050' }
                   ]}>
                   Auswählen
                 </Text>
@@ -476,21 +443,13 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
       )}
       {state.loading && !state.error && (
         <View style={styles.infoErrorView}>
-          <ActivityIndicator
-            style={styles.spinner}
-            size="large"
-            color="#6404ec"
-          />
+          <ActivityIndicator style={styles.spinner} size="large" color="#6404ec" />
           <Text style={styles.loadingText}>Umfrage wird geladen ...</Text>
         </View>
       )}
       {!state.loading && state.error && (
         <View style={styles.infoErrorView}>
-          <IonIcons
-            name="information-circle-outline"
-            size={40}
-            color="#ef4444"
-          />
+          <IonIcons name="information-circle-outline" size={40} color="#ef4444" />
           <Text style={styles.errorText}>{state.error}</Text>
         </View>
       )}
@@ -501,15 +460,11 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
         <Dialog.Title>Umfrage auswählen</Dialog.Title>
         <Dialog.Description>
           Möchten Sie die Umfrage wirklich auswählen?{'\n\n\n'}
-          <Text style={{color: '#ef4444'}}>
+          <Text style={{ color: '#ef4444' }}>
             Nicht synchronisierte Abstimmungen gehen verloren!
           </Text>
         </Dialog.Description>
-        <Dialog.Button
-          color="#ef4444"
-          label="Bestätigen"
-          onPress={() => selectSurvey()}
-        />
+        <Dialog.Button color="#ef4444" label="Bestätigen" onPress={() => selectSurvey()} />
         <Dialog.Button
           color="#6404ec"
           label="Abbrechen"
@@ -522,7 +477,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   warningContainer: {
     width: '100%',
@@ -533,19 +488,19 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   warningText: {
     color: '#ef4444',
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '400'
   },
   headerContainer: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   headerText: {
     marginHorizontal: 20,
@@ -554,26 +509,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6404ec',
     letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   infoErrorView: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   spinner: {
-    padding: 10,
+    padding: 10
   },
   loadingText: {
     fontWeight: 'bold',
     padding: 5,
-    color: '#000000',
+    color: '#000000'
   },
   errorText: {
     padding: 5,
     color: '#ef4444',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   surveyInfoContainer: {
     width: '100%',
@@ -583,7 +538,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   surveyInfoLeftContainer: {
     width: '70%',
@@ -591,7 +546,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    paddingRight: 5,
+    paddingRight: 5
   },
   surveyInfoRightContainer: {
     width: '30%',
@@ -599,17 +554,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingLeft: 5,
+    paddingLeft: 5
   },
   largeText: {
     fontSize: 22,
     fontWeight: '500',
-    color: '#000000',
+    color: '#000000'
   },
   normalText: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#616161',
+    color: '#616161'
   },
   surveyBadgeContainer: {
     height: '100%',
@@ -618,7 +573,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    gap: 4,
+    gap: 4
   },
   badge: {
     display: 'flex',
@@ -627,38 +582,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 4,
     paddingHorizontal: 5,
-    paddingVertical: 1,
+    paddingVertical: 1
   },
   badgeText: {
     color: '#ffffff',
-    fontWeight: '600',
+    fontWeight: '600'
   },
   surveyInfoKeyContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   surveyInfoValueContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    marginRight: 20,
+    marginRight: 20
   },
   infoKeyText: {
     color: '#000000',
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   infoValueText: {
     color: '#000000',
-    fontSize: 15,
+    fontSize: 15
   },
   scrollView: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   greetingContainer: {
     width: '100%',
@@ -666,20 +621,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   greetingText: {
     marginHorizontal: 20,
     paddingVertical: 10,
     fontSize: 18,
-    color: '#000000',
+    color: '#000000'
   },
   greetingTextKey: {
     marginHorizontal: 20,
     paddingVertical: 10,
     fontSize: 18,
     fontWeight: '500',
-    color: '#000000',
+    color: '#000000'
   },
   questionContainer: {
     width: '100%',
@@ -691,17 +646,17 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#ffffff',
     borderTopWidth: 1,
-    borderColor: '#e3e3e3',
+    borderColor: '#e3e3e3'
   },
   question: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#000000',
+    color: '#000000'
   },
   questionMeta: {
     fontSize: 14,
     fontWeight: '400',
-    color: '#000000',
+    color: '#000000'
   },
   answerOptionsContainer: {
     width: '100%',
@@ -711,7 +666,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 10,
-    paddingTop: 10,
+    paddingTop: 10
   },
   answerPicture: {
     flex: 1,
@@ -719,7 +674,7 @@ const styles = StyleSheet.create({
     maxHeight: '100%',
     width: undefined,
     height: undefined,
-    aspectRatio: 1,
+    aspectRatio: 1
   },
   selectContainer: {
     width: '100%',
@@ -730,7 +685,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   selectInfoBox: {
     height: '100%',
@@ -740,17 +695,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     gap: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 20
   },
   selectInfoText: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#6404ec',
+    color: '#6404ec'
   },
   selectErrorText: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#ef4444',
+    color: '#ef4444'
   },
   selectButtonBox: {
     height: '100%',
@@ -762,13 +717,13 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 20,
     borderLeftWidth: 1,
-    borderColor: '#e3e3e3',
+    borderColor: '#e3e3e3'
   },
   selectText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#6404ec',
-  },
+    color: '#6404ec'
+  }
 });
 
 export default ChooseSurveySubmitScreen;

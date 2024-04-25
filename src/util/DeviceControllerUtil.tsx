@@ -1,6 +1,6 @@
-import {NativeModules, NativeEventEmitter} from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
-const {DeviceControllerModule} = NativeModules;
+const { DeviceControllerModule } = NativeModules;
 
 export default {
   startLockTask() {
@@ -20,5 +20,5 @@ export default {
   },
   getEventEmitter() {
     return new NativeEventEmitter(DeviceControllerModule);
-  },
+  }
 };

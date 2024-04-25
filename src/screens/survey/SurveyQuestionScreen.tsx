@@ -1,16 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  TouchableHighlight,
-  Image,
-  Easing,
-} from 'react-native';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, Animated, TouchableHighlight, Image, Easing } from 'react-native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
-import {useStorage} from '../../../App';
+import { useStorage } from '../../../App';
 import FileUtil from '../../util/FileUtil';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
@@ -42,13 +34,13 @@ function SurveyQuestionScreen(): React.JSX.Element {
       Animated.timing(fadeViewAnimation, {
         toValue: 1,
         duration: 600,
-        useNativeDriver: true,
+        useNativeDriver: true
       }).start(() => questionDisplayed(order));
     } else {
       Animated.timing(fadeViewAnimation, {
         toValue: 0,
         duration: 600,
-        useNativeDriver: true,
+        useNativeDriver: true
       }).start(() => {
         if (question.order < selectedSurvey.questions.length) {
           setQuestion(getQuestion(order));
@@ -56,7 +48,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
           Animated.timing(fadeViewAnimation, {
             toValue: 1,
             duration: 600,
-            useNativeDriver: true,
+            useNativeDriver: true
           }).start(() => questionDisplayed(order));
         } else {
           stopTimer();
@@ -70,12 +62,12 @@ function SurveyQuestionScreen(): React.JSX.Element {
                   params: {
                     voting: {
                       ...currentVoting,
-                      ...{date: new Date().toISOString()},
-                    },
-                  },
-                },
-              ],
-            }),
+                      ...{ date: new Date().toISOString() }
+                    }
+                  }
+                }
+              ]
+            })
           );
         }
       });
@@ -98,7 +90,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
     setQuestionTimer(
       setTimeout(() => {
         abortSurvey();
-      }, timeout * 1000),
+      }, timeout * 1000)
     );
 
     progressViewAnimation.setValue(1);
@@ -107,7 +99,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
       toValue: 0,
       duration: timeout * 1000,
       easing: Easing.linear,
-      useNativeDriver: false,
+      useNativeDriver: false
     }).start();
   };
 
@@ -122,10 +114,10 @@ function SurveyQuestionScreen(): React.JSX.Element {
   };
 
   const onClickAnswerOption = (answerOptionObject: any) => {
-    let currentVotes = currentVoting.votes;
+    const currentVotes = currentVoting.votes;
     let exists = false;
 
-    for (let i in currentVotes) {
+    for (const i in currentVotes) {
       if (currentVotes[i].question === question._id) {
         exists = true;
 
@@ -136,10 +128,10 @@ function SurveyQuestionScreen(): React.JSX.Element {
     if (!questionReady || !exists) {
       currentVotes.push({
         question: question._id,
-        answerOption: answerOptionObject._id,
+        answerOption: answerOptionObject._id
       });
 
-      setCurrentVoting({...currentVoting, ...{votes: currentVotes}});
+      setCurrentVoting({ ...currentVoting, ...{ votes: currentVotes } });
       displayQuestion(question.order + 1);
     }
   };
@@ -151,17 +143,17 @@ function SurveyQuestionScreen(): React.JSX.Element {
     Animated.timing(fadeViewAnimation, {
       toValue: 0,
       duration: 600,
-      useNativeDriver: true,
+      useNativeDriver: true
     }).start(() => {
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
           routes: [
             {
-              name: 'SurveyStartScreen',
-            },
-          ],
-        }),
+              name: 'SurveyStartScreen'
+            }
+          ]
+        })
       );
     });
   };
@@ -185,7 +177,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
     console.log('[Lifecycle] Mount - SurveyQuestionScreen');
 
     setCurrentVoting({
-      votes: [],
+      votes: []
     });
 
     displayQuestion(1);
@@ -200,43 +192,36 @@ function SurveyQuestionScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[styles.contentContainer, {opacity: fadeViewAnimation}]}>
+      <Animated.View style={[styles.contentContainer, { opacity: fadeViewAnimation }]}>
         <View style={styles.questionTextContainer}>
-          <Text
-            style={styles.questionText}
-            adjustsFontSizeToFit={true}
-            allowFontScaling={true}>
+          <Text style={styles.questionText} adjustsFontSizeToFit={true} allowFontScaling={true}>
             {questionLoaded ? question.question : ''}
           </Text>
         </View>
         <View style={styles.answerPictureContainer}>
           {questionLoaded
-            ? question.answerOptions.map(
-                (answerOptionObject: any, index: number) => {
-                  return (
-                    <TouchableHighlight
-                      style={styles.answerPictureHolder}
-                      key={answerOptionObject._id + ' ' + index}
-                      disabled={
-                        !questionReady ||
-                        currentVoting.votes.filter(
-                          (answer: any) => answer.question === question._id,
-                        ).length !== 0
-                      }
-                      onPress={() => onClickAnswerOption(answerOptionObject)}
-                      underlayColor="transparent">
-                      <Image
-                        style={styles.answerPicture}
-                        resizeMode="contain"
-                        source={{
-                          uri: getImageURI(answerOptionObject),
-                        }}
-                      />
-                    </TouchableHighlight>
-                  );
-                },
-              )
+            ? question.answerOptions.map((answerOptionObject: any, index: number) => {
+                return (
+                  <TouchableHighlight
+                    style={styles.answerPictureHolder}
+                    key={answerOptionObject._id + ' ' + index}
+                    disabled={
+                      !questionReady ||
+                      currentVoting.votes.filter((answer: any) => answer.question === question._id)
+                        .length !== 0
+                    }
+                    onPress={() => onClickAnswerOption(answerOptionObject)}
+                    underlayColor="transparent">
+                    <Image
+                      style={styles.answerPicture}
+                      resizeMode="contain"
+                      source={{
+                        uri: getImageURI(answerOptionObject)
+                      }}
+                    />
+                  </TouchableHighlight>
+                );
+              })
             : null}
         </View>
         <View style={styles.actionsContainer}>
@@ -257,9 +242,9 @@ function SurveyQuestionScreen(): React.JSX.Element {
           {
             width: progressViewAnimation.interpolate({
               inputRange: [0, 0.25, 0.5, 0.75, 1],
-              outputRange: ['0%', '25%', '50%', '75%', '100%'],
-            }),
-          },
+              outputRange: ['0%', '25%', '50%', '75%', '100%']
+            })
+          }
         ]}
       />
       <SurveyOverlay
@@ -272,11 +257,11 @@ function SurveyQuestionScreen(): React.JSX.Element {
                 {
                   name: 'DashboardNavigator',
                   state: {
-                    routes: [{name: 'OverviewScreen'}],
-                  },
-                },
-              ],
-            }),
+                    routes: [{ name: 'OverviewScreen' }]
+                  }
+                }
+              ]
+            })
           );
         }}
       />
@@ -290,7 +275,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   overlayStyles: {
     position: 'absolute',
@@ -298,7 +283,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     zIndex: 999,
-    backgroundColor: '#000000',
+    backgroundColor: '#000000'
   },
   contentContainer: {
     width: '90%',
@@ -306,21 +291,21 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   questionTextContainer: {
     width: '100%',
     height: '60%',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   questionText: {
     color: '#000000',
     fontWeight: '500',
     fontSize: 90, // used as max font size
     textAlign: 'center',
-    textAlignVertical: 'center',
+    textAlignVertical: 'center'
   },
   answerPictureContainer: {
     width: '100%',
@@ -329,14 +314,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 15,
+    paddingVertical: 15
   },
   answerPictureHolder: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 10
   },
   answerPicture: {
     flex: 1,
@@ -344,7 +329,7 @@ const styles = StyleSheet.create({
     maxHeight: '100%',
     width: undefined,
     height: undefined,
-    aspectRatio: 1,
+    aspectRatio: 1
   },
   actionsContainer: {
     width: '100%',
@@ -352,11 +337,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   actionBarText: {
-    fontSize: 22,
-  },
+    fontSize: 22
+  }
 });
 
 export default SurveyQuestionScreen;

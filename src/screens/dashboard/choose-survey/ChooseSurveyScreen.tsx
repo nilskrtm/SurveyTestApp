@@ -1,17 +1,17 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
   TouchableHighlight,
-  View,
+  View
 } from 'react-native';
-import {useAuthAxios} from '../../../util/WebUtil';
+import { useAuthAxios } from '../../../util/WebUtil';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import {useStorage} from '../../../../App';
+import { useStorage } from '../../../../App';
 import TimeUtil from '../../../util/TimeUtil';
-import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 
 type ChooseSurveyScreenData = {
   loading: boolean;
@@ -36,33 +36,33 @@ function ChooseSurveyScreen(): React.JSX.Element {
       perPage: 0,
       page: 1,
       lastPage: 1,
-      count: 0,
+      count: 0
     },
-    surveys: [],
+    surveys: []
   });
 
   const hasWarning = !serverAddress || !username || !accessKey;
 
   const loadSurveys = useCallback((newPagingOptions: any) => {
-    setState({...state, loading: true, error: ''});
+    setState({ ...state, loading: true, error: '' });
 
     authAxios
       .get(`/surveys?page=${newPagingOptions.page}`)
-      .then(response => {
+      .then((response) => {
         console.log(response);
         setState({
           ...state,
           loading: false,
           error: '',
           surveys: response.data.surveys,
-          pagingOptions: response.data.paging,
+          pagingOptions: response.data.paging
         });
       })
       .catch(() => {
         setState({
           ...state,
           loading: false,
-          error: 'Fehler beim Laden der Umfragen!',
+          error: 'Fehler beim Laden der Umfragen!'
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,11 +77,11 @@ function ChooseSurveyScreen(): React.JSX.Element {
             name: 'ChooseSurveySubmitScreen',
             params: {
               surveyId: surveyId,
-              lastPagingOptions: state.pagingOptions,
-            },
-          },
-        ],
-      }),
+              lastPagingOptions: state.pagingOptions
+            }
+          }
+        ]
+      })
     );
   };
 
@@ -91,7 +91,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
     const parentNavigator = navigation.getParent();
 
     if (parentNavigator) {
-      parentNavigator.setOptions({headerLeft: undefined});
+      parentNavigator.setOptions({ headerLeft: undefined });
     }
 
     // @ts-ignore
@@ -137,11 +137,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
                 activeOpacity={0.6}
                 underlayColor="#ffffff"
                 onPress={() => selectSurvey(survey._id)}>
-                <View
-                  style={[
-                    styles.surveyBox,
-                    {borderTopWidth: index === 0 ? 0 : 1},
-                  ]}>
+                <View style={[styles.surveyBox, { borderTopWidth: index === 0 ? 0 : 1 }]}>
                   <View style={styles.surveyNameBox}>
                     <Text style={styles.largeText} numberOfLines={1}>
                       {survey.name}
@@ -177,49 +173,31 @@ function ChooseSurveyScreen(): React.JSX.Element {
                     </View>
                     <View style={styles.surveyBadgeContainer}>
                       {survey.draft && (
-                        <View
-                          style={[styles.badge, {backgroundColor: '#fb923c'}]}>
+                        <View style={[styles.badge, { backgroundColor: '#fb923c' }]}>
                           <Text style={styles.badgeText}>Entwurf</Text>
                         </View>
                       )}
                       {!survey.draft &&
-                        new Date(survey.startDate).getTime() >
-                          new Date().getTime() && (
-                          <View
-                            style={[
-                              styles.badge,
-                              {backgroundColor: '#22c55e'},
-                            ]}>
+                        new Date(survey.startDate).getTime() > new Date().getTime() && (
+                          <View style={[styles.badge, { backgroundColor: '#22c55e' }]}>
                             <Text style={styles.badgeText}>Bereit</Text>
                           </View>
                         )}
                       {!survey.draft &&
-                        new Date(survey.startDate).getTime() <=
-                          new Date().getTime() &&
-                        new Date(survey.endDate).getTime() >
-                          new Date().getTime() && (
-                          <View
-                            style={[
-                              styles.badge,
-                              {backgroundColor: '#6404ec'},
-                            ]}>
+                        new Date(survey.startDate).getTime() <= new Date().getTime() &&
+                        new Date(survey.endDate).getTime() > new Date().getTime() && (
+                          <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
                             <Text style={styles.badgeText}>Aktiv</Text>
                           </View>
                         )}
                       {!survey.draft &&
-                        new Date(survey.endDate).getTime() <
-                          new Date().getTime() && (
-                          <View
-                            style={[
-                              styles.badge,
-                              {backgroundColor: '#ef4444'},
-                            ]}>
+                        new Date(survey.endDate).getTime() < new Date().getTime() && (
+                          <View style={[styles.badge, { backgroundColor: '#ef4444' }]}>
                             <Text style={styles.badgeText}>Beendet</Text>
                           </View>
                         )}
                       {survey.archived && (
-                        <View
-                          style={[styles.badge, {backgroundColor: '#9a3412'}]}>
+                        <View style={[styles.badge, { backgroundColor: '#9a3412' }]}>
                           <Text style={styles.badgeText}>Archiv</Text>
                         </View>
                       )}
@@ -240,7 +218,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
                   : () => {
                       loadSurveys({
                         ...state.pagingOptions,
-                        page: state.pagingOptions.page - 1,
+                        page: state.pagingOptions.page - 1
                       });
                     }
               }>
@@ -251,8 +229,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
               />
             </TouchableHighlight>
             <Text style={styles.pagingText}>
-              Seite {state.pagingOptions.page} von{' '}
-              {state.pagingOptions.lastPage}
+              Seite {state.pagingOptions.page} von {state.pagingOptions.lastPage}
             </Text>
             <TouchableHighlight
               style={styles.pagerBox}
@@ -264,7 +241,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
                   : () => {
                       loadSurveys({
                         ...state.pagingOptions,
-                        page: state.pagingOptions.page + 1,
+                        page: state.pagingOptions.page + 1
                       });
                     }
               }>
@@ -272,9 +249,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
                 name="chevron-forward-circle-outline"
                 size={36}
                 color={
-                  state.pagingOptions.page < state.pagingOptions.lastPage
-                    ? '#6404ec'
-                    : '#505050'
+                  state.pagingOptions.page < state.pagingOptions.lastPage ? '#6404ec' : '#505050'
                 }
               />
             </TouchableHighlight>
@@ -283,33 +258,19 @@ function ChooseSurveyScreen(): React.JSX.Element {
       )}
       {!state.loading && !state.error && state.surveys.length === 0 && (
         <View style={styles.infoErrorView}>
-          <IonIcons
-            name="information-circle-outline"
-            size={40}
-            color="#6404ec"
-          />
-          <Text style={styles.loadingText}>
-            Es wurden keine Umfragen gefunden.
-          </Text>
+          <IonIcons name="information-circle-outline" size={40} color="#6404ec" />
+          <Text style={styles.loadingText}>Es wurden keine Umfragen gefunden.</Text>
         </View>
       )}
       {state.loading && !state.error && (
         <View style={styles.infoErrorView}>
-          <ActivityIndicator
-            style={styles.spinner}
-            size="large"
-            color="#6404ec"
-          />
+          <ActivityIndicator style={styles.spinner} size="large" color="#6404ec" />
           <Text style={styles.loadingText}>Umfragen werden geladen ...</Text>
         </View>
       )}
       {!state.loading && state.error && (
         <View style={styles.infoErrorView}>
-          <IonIcons
-            name="information-circle-outline"
-            size={40}
-            color="#ef4444"
-          />
+          <IonIcons name="information-circle-outline" size={40} color="#ef4444" />
           <Text style={styles.errorText}>{state.error}</Text>
         </View>
       )}
@@ -319,7 +280,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   warningContainer: {
     width: '100%',
@@ -330,19 +291,19 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   warningText: {
     color: '#ef4444',
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '400'
   },
   headerContainer: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   headerText: {
     marginLeft: 20,
@@ -351,38 +312,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6404ec',
     letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   reloadButton: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 20,
+    marginRight: 20
   },
   scrollView: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   infoErrorView: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   spinner: {
-    padding: 10,
+    padding: 10
   },
   loadingText: {
     fontWeight: 'bold',
     padding: 5,
-    color: '#000000',
+    color: '#000000'
   },
   errorText: {
     padding: 5,
     color: '#ef4444',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   surveyBox: {
     width: '100%',
@@ -394,7 +355,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   surveyNameBox: {
     height: '100%',
@@ -404,17 +365,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     gap: 4,
-    paddingRight: 5,
+    paddingRight: 5
   },
   largeText: {
     fontSize: 20,
     fontWeight: '500',
-    color: '#000000',
+    color: '#000000'
   },
   normalText: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#616161',
+    color: '#616161'
   },
   surveyDataBox: {
     height: '100%',
@@ -423,7 +384,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingLeft: 5,
+    paddingLeft: 5
   },
   surveyBadgeContainer: {
     height: '100%',
@@ -432,7 +393,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    gap: 4,
+    gap: 4
   },
   badge: {
     display: 'flex',
@@ -441,11 +402,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 4,
     paddingHorizontal: 5,
-    paddingVertical: 1,
+    paddingVertical: 1
   },
   badgeText: {
     color: '#ffffff',
-    fontWeight: '600',
+    fontWeight: '600'
   },
   surveyInfoContainer: {
     height: '100%',
@@ -453,30 +414,30 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around'
   },
   surveyInfoKeyContainer: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   surveyInfoValueContainer: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-start'
   },
   infoKeyText: {
     color: '#000000',
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '500'
   },
   infoValueText: {
     color: '#000000',
-    fontSize: 15,
+    fontSize: 15
   },
   pagingContainer: {
     width: '100%',
@@ -487,7 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   pagerBox: {
     height: '100%',
@@ -495,14 +456,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    flexGrow: 1,
+    flexGrow: 1
   },
   pagingText: {
     flexGrow: 1,
     fontSize: 16,
     textAlign: 'center',
-    color: '#000000',
-  },
+    color: '#000000'
+  }
 });
 
 export default ChooseSurveyScreen;

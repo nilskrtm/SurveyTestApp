@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,18 +7,14 @@ import {
   Modal,
   TouchableHighlight,
   ScrollView,
-  ActivityIndicator,
+  ActivityIndicator
 } from 'react-native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import {
-  SyncedVoting,
-  useVotingQuery,
-  VotingSyncJob,
-} from '../../votings/VotingModels';
+import { SyncedVoting, useVotingQuery, VotingSyncJob } from '../../votings/VotingModels';
 import PagingUtil from '../../util/PagingUtil';
 import TimeUtil from '../../util/TimeUtil';
 
-const PER_PAGE: number = 25;
+const PER_PAGE = 25;
 
 type VotingsScreenData = {
   dropdownOpen: boolean;
@@ -45,15 +41,15 @@ function VotingsScreen(): React.JSX.Element {
       page: 1,
       lastPage: 1,
       offset: 0,
-      count: 0,
+      count: 0
     },
-    data: [],
+    data: []
   });
 
   const hasWarning = false;
 
   const loadData = useCallback((votingType: string, newPagingOptions: any) => {
-    setState({...state, votingType: votingType, loading: true, error: ''});
+    setState({ ...state, votingType: votingType, loading: true, error: '' });
 
     try {
       if (votingType === 'open') {
@@ -69,7 +65,7 @@ function VotingsScreen(): React.JSX.Element {
           votingType: votingType,
           loading: false,
           data: data,
-          pagingOptions: paging,
+          pagingOptions: paging
         });
 
         return;
@@ -87,7 +83,7 @@ function VotingsScreen(): React.JSX.Element {
           votingType: votingType,
           loading: false,
           data: data,
-          pagingOptions: paging,
+          pagingOptions: paging
         });
 
         return;
@@ -98,22 +94,22 @@ function VotingsScreen(): React.JSX.Element {
         votingType: votingType,
         loading: false,
         data: [],
-        error: 'Fehler beim Laden der Daten!',
+        error: 'Fehler beim Laden der Daten!'
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleDropdown = () => {
-    setState({...state, dropdownOpen: !state.dropdownOpen});
+    setState({ ...state, dropdownOpen: !state.dropdownOpen });
   };
 
   const setVotingType = (type: string) => {
-    setState({...state, dropdownOpen: false});
+    setState({ ...state, dropdownOpen: false });
 
     loadData(type, {
       perPage: PER_PAGE,
-      page: 1,
+      page: 1
     });
   };
 
@@ -132,7 +128,7 @@ function VotingsScreen(): React.JSX.Element {
 
     loadData('open', {
       perPage: PER_PAGE,
-      page: 1,
+      page: 1
     });
 
     return () => {
@@ -158,7 +154,7 @@ function VotingsScreen(): React.JSX.Element {
           <Modal visible={state.dropdownOpen} transparent animationType="none">
             <TouchableOpacity
               style={styles.dropdownOverlay}
-              onPress={() => setState({...state, dropdownOpen: false})}>
+              onPress={() => setState({ ...state, dropdownOpen: false })}>
               <View style={styles.dropdown}>
                 {state.votingType === 'open' ? (
                   <TouchableOpacity
@@ -193,7 +189,7 @@ function VotingsScreen(): React.JSX.Element {
           <ScrollView style={styles.scrollView}>
             {state.votingType === 'open' ? (
               <>
-                <View style={[styles.voteBox, {borderTopWidth: 0}]}>
+                <View style={[styles.voteBox, { borderTopWidth: 0 }]}>
                   <View style={styles.voteTextBox}>
                     <Text style={styles.voteHeaderText} numberOfLines={1}>
                       Abstimmung
@@ -213,7 +209,7 @@ function VotingsScreen(): React.JSX.Element {
               </>
             ) : (
               <>
-                <View style={[styles.voteBox, {borderTopWidth: 0}]}>
+                <View style={[styles.voteBox, { borderTopWidth: 0 }]}>
                   <View style={styles.voteTextBox}>
                     <Text style={styles.voteHeaderText} numberOfLines={1}>
                       Abstimmung
@@ -232,7 +228,7 @@ function VotingsScreen(): React.JSX.Element {
                 </View>
               </>
             )}
-            {state.data.map(object => (
+            {state.data.map((object) => (
               <View style={styles.voteBox} key={object._id}>
                 {state.votingType === 'open' ? (
                   <>
@@ -285,7 +281,7 @@ function VotingsScreen(): React.JSX.Element {
                   : () => {
                       loadData(state.votingType, {
                         ...state.pagingOptions,
-                        page: state.pagingOptions.page - 1,
+                        page: state.pagingOptions.page - 1
                       });
                     }
               }>
@@ -296,8 +292,7 @@ function VotingsScreen(): React.JSX.Element {
               />
             </TouchableHighlight>
             <Text style={styles.pagingText}>
-              Seite {state.pagingOptions.page} von{' '}
-              {state.pagingOptions.lastPage}
+              Seite {state.pagingOptions.page} von {state.pagingOptions.lastPage}
             </Text>
             <TouchableHighlight
               style={styles.pagerBox}
@@ -309,7 +304,7 @@ function VotingsScreen(): React.JSX.Element {
                   : () => {
                       loadData(state.votingType, {
                         ...state.pagingOptions,
-                        page: state.pagingOptions.page + 1,
+                        page: state.pagingOptions.page + 1
                       });
                     }
               }>
@@ -317,9 +312,7 @@ function VotingsScreen(): React.JSX.Element {
                 name="chevron-forward-circle-outline"
                 size={36}
                 color={
-                  state.pagingOptions.page < state.pagingOptions.lastPage
-                    ? '#6404ec'
-                    : '#505050'
+                  state.pagingOptions.page < state.pagingOptions.lastPage ? '#6404ec' : '#505050'
                 }
               />
             </TouchableHighlight>
@@ -328,11 +321,7 @@ function VotingsScreen(): React.JSX.Element {
       )}
       {!state.loading && !state.error && state.data.length === 0 && (
         <View style={styles.infoErrorView}>
-          <IonIcons
-            name="information-circle-outline"
-            size={40}
-            color="#6404ec"
-          />
+          <IonIcons name="information-circle-outline" size={40} color="#6404ec" />
           <Text style={styles.loadingText}>
             {state.votingType === 'open'
               ? 'Es wurden keine offenen Abstimmungen für die aktuelle Umfrage gefunden.'
@@ -342,23 +331,13 @@ function VotingsScreen(): React.JSX.Element {
       )}
       {state.loading && !state.error && (
         <View style={styles.infoErrorView}>
-          <ActivityIndicator
-            style={styles.spinner}
-            size="large"
-            color="#6404ec"
-          />
-          <Text style={styles.loadingText}>
-            Abstimmungen werden geladen ...
-          </Text>
+          <ActivityIndicator style={styles.spinner} size="large" color="#6404ec" />
+          <Text style={styles.loadingText}>Abstimmungen werden geladen ...</Text>
         </View>
       )}
       {!state.loading && state.error && (
         <View style={styles.infoErrorView}>
-          <IonIcons
-            name="information-circle-outline"
-            size={40}
-            color="#ef4444"
-          />
+          <IonIcons name="information-circle-outline" size={40} color="#ef4444" />
           <Text style={styles.errorText}>{state.error}</Text>
         </View>
       )}
@@ -368,7 +347,7 @@ function VotingsScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   warningContainer: {
     width: '100%',
@@ -379,19 +358,19 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   warningText: {
     color: '#ef4444',
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '400'
   },
   headerContainer: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   headerText: {
     marginLeft: 20,
@@ -400,22 +379,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6404ec',
     letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   dropdownContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1,
+    zIndex: 1
   },
   dropdownIcon: {
     marginRight: 20,
-    marginLeft: 10,
+    marginLeft: 10
   },
   dropdownOverlay: {
     width: '100%',
-    height: '100%',
+    height: '100%'
   },
   dropdown: {
     position: 'absolute',
@@ -424,7 +403,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-end',
     justifyContent: 'center',
-    top: 95,
+    top: 95
   },
   dropdownItem: {
     width: '100%',
@@ -432,7 +411,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderBottomWidth: 1,
+    borderBottomWidth: 1
   },
   dropdownItemText: {
     fontWeight: '600',
@@ -441,31 +420,31 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     textAlign: 'right',
     textTransform: 'uppercase',
-    marginRight: 40,
+    marginRight: 40
   },
   scrollView: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   infoErrorView: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   spinner: {
-    padding: 10,
+    padding: 10
   },
   loadingText: {
     fontWeight: 'bold',
     padding: 5,
-    color: '#000000',
+    color: '#000000'
   },
   errorText: {
     padding: 5,
     color: '#ef4444',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   voteBox: {
     width: '100%',
@@ -478,23 +457,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   voteTextBox: {
-    width: '33%',
+    width: '33%'
   },
   voteHeaderText: {
     width: '100%',
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#000000',
+    color: '#000000'
   },
   voteText: {
     width: '100%',
     fontSize: 16,
     textAlign: 'center',
-    color: '#000000',
+    color: '#000000'
   },
   pagingContainer: {
     width: '100%',
@@ -505,7 +484,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   pagerBox: {
     height: '100%',
@@ -513,14 +492,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    flexGrow: 1,
+    flexGrow: 1
   },
   pagingText: {
     flexGrow: 1,
     fontSize: 16,
     textAlign: 'center',
-    color: '#000000',
-  },
+    color: '#000000'
+  }
 });
 
 export default VotingsScreen;

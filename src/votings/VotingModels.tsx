@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import {createRealmContext} from '@realm/react';
+import { createRealmContext } from '@realm/react';
 
 export class VotingSyncJob extends Realm.Object<VotingSyncJob> {
   _id!: string;
@@ -21,9 +21,9 @@ export class VotingSyncJob extends Realm.Object<VotingSyncJob> {
       failState: 'string',
       failedInScope: 'bool',
       surveyId: 'string',
-      voting: 'string',
+      voting: 'string'
     },
-    primaryKey: '_id',
+    primaryKey: '_id'
   };
 }
 
@@ -43,16 +43,16 @@ export class SyncedVoting extends Realm.Object<SyncedVoting> {
       created: 'date',
       synced: 'date',
       surveyId: 'string',
-      voting: 'string',
+      voting: 'string'
     },
-    primaryKey: '_id',
+    primaryKey: '_id'
   };
 }
 
 const realmConfig: Realm.Configuration = {
-  schema: [VotingSyncJob, SyncedVoting],
+  schema: [VotingSyncJob, SyncedVoting]
 };
-const {RealmProvider, useRealm, useQuery} = createRealmContext(realmConfig);
+const { RealmProvider, useRealm, useQuery } = createRealmContext(realmConfig);
 
 export const VotingRealmProvider = RealmProvider;
 export const useVotingRealm = useRealm;

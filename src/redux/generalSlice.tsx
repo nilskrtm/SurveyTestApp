@@ -1,5 +1,5 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {RootState} from './store';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from './store';
 
 interface GeneralState {
   isDeviceOwner: boolean;
@@ -10,7 +10,7 @@ interface GeneralState {
 const initialState: GeneralState = {
   isDeviceOwner: false,
   isVotingsSyncing: false,
-  isSurveyTestMode: false,
+  isSurveyTestMode: false
 };
 
 export const generalSlice = createSlice({
@@ -25,20 +25,16 @@ export const generalSlice = createSlice({
     },
     setIsSurveyTestMode: (state, action: PayloadAction<boolean>) => {
       state.isSurveyTestMode = action.payload;
-    },
-  },
+    }
+  }
 });
 
-export const {setIsDeviceOwner, setIsVotingsSyncing, setIsSurveyTestMode} =
-  generalSlice.actions;
+export const { setIsDeviceOwner, setIsVotingsSyncing, setIsSurveyTestMode } = generalSlice.actions;
 
-export const selectIsDeviceOwner = (state: RootState) =>
-  state.general.isDeviceOwner;
+export const selectIsDeviceOwner = (state: RootState) => state.general.isDeviceOwner;
 
-export const selectIsVotingsSyncing = (state: RootState) =>
-  state.general.isVotingsSyncing;
+export const selectIsVotingsSyncing = (state: RootState) => state.general.isVotingsSyncing;
 
-export const selectIsSurveyTestMode = (state: RootState) =>
-  state.general.isSurveyTestMode;
+export const selectIsSurveyTestMode = (state: RootState) => state.general.isSurveyTestMode;
 
 export default generalSlice.reducer;

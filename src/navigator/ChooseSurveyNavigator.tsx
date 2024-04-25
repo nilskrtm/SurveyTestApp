@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useEffect } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ChooseSurveyScreen from '../screens/dashboard/choose-survey/ChooseSurveyScreen';
 import ChooseSurveySubmitScreen from '../screens/dashboard/choose-survey/ChooseSurveySubmitScreen';
 
@@ -37,13 +37,10 @@ function ChooseSurveyNavigator(): React.JSX.Element {
       initialRouteName={'ChooseSurveyScreen'}
       screenOptions={{
         animation: 'none',
-        headerShown: false,
+        headerShown: false
       }}>
       <Stack.Screen name="ChooseSurveyScreen" component={ChooseSurveyScreen} />
-      <Stack.Screen
-        name="ChooseSurveySubmitScreen"
-        component={ChooseSurveySubmitScreen}
-      />
+      <Stack.Screen name="ChooseSurveySubmitScreen" component={ChooseSurveySubmitScreen} />
     </Stack.Navigator>
   );
 }

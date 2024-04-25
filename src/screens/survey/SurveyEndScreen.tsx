@@ -1,16 +1,10 @@
-import React, {useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  InteractionManager,
-} from 'react-native';
-import {CommonActions, useNavigation, useRoute} from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated, InteractionManager } from 'react-native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
-import {useAppSelector} from '../../redux/hooks';
-import {selectIsSurveyTestMode} from '../../redux/generalSlice';
-import {useStorage} from '../../../App';
+import { useAppSelector } from '../../redux/hooks';
+import { selectIsSurveyTestMode } from '../../redux/generalSlice';
+import { useStorage } from '../../../App';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
 function SurveyEndScreen(): React.JSX.Element {
@@ -36,11 +30,7 @@ function SurveyEndScreen(): React.JSX.Element {
 
     voting.date = new Date(voting.date);
 
-    VotingSyncQueue.getInstance().addVoting(
-      selectedSurvey._id,
-      voting,
-      autoSync,
-    );
+    VotingSyncQueue.getInstance().addVoting(selectedSurvey._id, voting, autoSync);
   };
 
   useEffect(() => {
@@ -50,7 +40,7 @@ function SurveyEndScreen(): React.JSX.Element {
       Animated.timing(fadeViewAnimation, {
         toValue: 1,
         duration: 750,
-        useNativeDriver: true,
+        useNativeDriver: true
       }).start(() => {
         if (!testMode) {
           saveAnswerSet();
@@ -60,17 +50,17 @@ function SurveyEndScreen(): React.JSX.Element {
           toValue: 0,
           duration: 750,
           delay: 1500,
-          useNativeDriver: true,
+          useNativeDriver: true
         }).start(() => {
           navigation.dispatch(
             CommonActions.reset({
               index: 1,
               routes: [
                 {
-                  name: 'SurveyStartScreen',
-                },
-              ],
-            }),
+                  name: 'SurveyStartScreen'
+                }
+              ]
+            })
           );
         });
       });
@@ -84,12 +74,8 @@ function SurveyEndScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[styles.contentContainer, {opacity: fadeViewAnimation}]}>
-        <Text
-          style={styles.endText}
-          adjustsFontSizeToFit={true}
-          allowFontScaling={true}>
+      <Animated.View style={[styles.contentContainer, { opacity: fadeViewAnimation }]}>
+        <Text style={styles.endText} adjustsFontSizeToFit={true} allowFontScaling={true}>
           Vielen Dank!
         </Text>
       </Animated.View>
@@ -103,11 +89,11 @@ function SurveyEndScreen(): React.JSX.Element {
                 {
                   name: 'DashboardNavigator',
                   state: {
-                    routes: [{name: 'OverviewScreen'}],
-                  },
-                },
-              ],
-            }),
+                    routes: [{ name: 'OverviewScreen' }]
+                  }
+                }
+              ]
+            })
           );
         }}
       />
@@ -121,7 +107,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   contentContainer: {
     width: '90%',
@@ -129,15 +115,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   endText: {
     color: '#000000',
     fontWeight: 'bold',
     fontSize: 90, // used as max font size
     textAlign: 'center',
-    textAlignVertical: 'center',
-  },
+    textAlignVertical: 'center'
+  }
 });
 
 export default SurveyEndScreen;

@@ -1,10 +1,10 @@
-import axios, {AxiosInstance, Cancel, CancelTokenStatic} from 'axios';
+import axios, { AxiosInstance, Cancel, CancelTokenStatic } from 'axios';
 import base64 from 'base-64';
-import {useStorage} from '../../App';
+import { useStorage } from '../../App';
 
-const authInstance: AxiosInstance = axios.create({timeout: 10000});
+const authInstance: AxiosInstance = axios.create({ timeout: 10000 });
 
-authInstance.interceptors.request.use(config => {
+authInstance.interceptors.request.use((config) => {
   config.url = (config.baseURL || '') + config.url;
 
   return config;
@@ -28,5 +28,5 @@ export default {
   },
   isCancelled(error: any): error is Cancel {
     return axios.isCancel(error);
-  },
+  }
 };

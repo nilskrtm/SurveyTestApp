@@ -1,15 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableHighlight,
   Animated,
-  InteractionManager,
+  InteractionManager
 } from 'react-native';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
-import {useStorage} from '../../../App';
+import { useStorage } from '../../../App';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
 function SurveyStartScreen(): React.JSX.Element {
@@ -17,12 +17,8 @@ function SurveyStartScreen(): React.JSX.Element {
 
   const [selectedSurvey] = useStorage<any>('selected_survey', {});
 
-  const fadeSpacerAnimation = useRef<Animated.Value>(
-    new Animated.Value(0),
-  ).current;
-  const fadeViewAnimation = useRef<Animated.Value>(
-    new Animated.Value(0),
-  ).current;
+  const fadeSpacerAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;
+  const fadeViewAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;
 
   const [startClicked, setStartClicked] = useState<boolean>(false);
 
@@ -30,7 +26,7 @@ function SurveyStartScreen(): React.JSX.Element {
     Animated.timing(fadeSpacerAnimation, {
       toValue: 1,
       duration: 1200,
-      useNativeDriver: true,
+      useNativeDriver: true
     }).start(() => {
       fadeOutSpacer();
     });
@@ -40,7 +36,7 @@ function SurveyStartScreen(): React.JSX.Element {
     Animated.timing(fadeSpacerAnimation, {
       toValue: 0,
       duration: 1200,
-      useNativeDriver: true,
+      useNativeDriver: true
     }).start(() => {
       fadeInSpacer();
     });
@@ -56,17 +52,17 @@ function SurveyStartScreen(): React.JSX.Element {
     Animated.timing(fadeViewAnimation, {
       toValue: 0,
       duration: 700,
-      useNativeDriver: true,
+      useNativeDriver: true
     }).start(() => {
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
           routes: [
             {
-              name: 'SurveyQuestionScreen',
-            },
-          ],
-        }),
+              name: 'SurveyQuestionScreen'
+            }
+          ]
+        })
       );
     });
   };
@@ -78,7 +74,7 @@ function SurveyStartScreen(): React.JSX.Element {
       Animated.timing(fadeViewAnimation, {
         toValue: 1,
         duration: 750,
-        useNativeDriver: true,
+        useNativeDriver: true
       }).start();
     });
 
@@ -99,19 +95,15 @@ function SurveyStartScreen(): React.JSX.Element {
           <View style={styles.overlay} />
         </TouchableHighlight>
       </View>
-      <Animated.View
-        style={[styles.contentContainer, {opacity: fadeViewAnimation}]}>
+      <Animated.View style={[styles.contentContainer, { opacity: fadeViewAnimation }]}>
         <View style={styles.greetingTextContainer}>
-          <Text
-            style={styles.greetingText}
-            adjustsFontSizeToFit={true}
-            allowFontScaling={true}>
+          <Text style={styles.greetingText} adjustsFontSizeToFit={true} allowFontScaling={true}>
             {selectedSurvey.greeting}
           </Text>
         </View>
         <View style={styles.startTextContainer}>
           <Animated.Text
-            style={[styles.startText, {opacity: fadeSpacerAnimation}]}
+            style={[styles.startText, { opacity: fadeSpacerAnimation }]}
             adjustsFontSizeToFit={true}
             allowFontScaling={true}
             onLayout={fadeInSpacer}>
@@ -129,11 +121,11 @@ function SurveyStartScreen(): React.JSX.Element {
                 {
                   name: 'DashboardNavigator',
                   state: {
-                    routes: [{name: 'OverviewScreen'}],
-                  },
-                },
-              ],
-            }),
+                    routes: [{ name: 'OverviewScreen' }]
+                  }
+                }
+              ]
+            })
           );
         }}
       />
@@ -147,7 +139,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   overlay: {
     position: 'absolute',
@@ -156,7 +148,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     zIndex: 999,
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   contentContainer: {
     width: '100%',
@@ -164,36 +156,36 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   greetingTextContainer: {
     width: '100%',
     height: '80%',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   startTextContainer: {
     width: '100%',
     height: '20%',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   greetingText: {
     color: '#000000',
     fontWeight: '500',
     fontSize: 90, // used as max font size
     textAlign: 'center',
-    textAlignVertical: 'center',
+    textAlignVertical: 'center'
   },
   startText: {
     color: '#505050',
     fontWeight: '400',
     fontSize: 30, // used as max font size
     textAlign: 'center',
-    textAlignVertical: 'center',
-  },
+    textAlignVertical: 'center'
+  }
 });
 
 export default SurveyStartScreen;

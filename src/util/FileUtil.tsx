@@ -1,15 +1,12 @@
-import RNFS, {DownloadResult, FSInfoResult} from 'react-native-fs';
+import RNFS, { DownloadResult, FSInfoResult } from 'react-native-fs';
 
 const mainPath: string = RNFS.DocumentDirectoryPath;
 
 export default {
-  downloadFile(
-    url: string,
-    toPath: string,
-  ): {jobId: number; promise: Promise<DownloadResult>} {
+  downloadFile(url: string, toPath: string): { jobId: number; promise: Promise<DownloadResult> } {
     return RNFS.downloadFile({
       fromUrl: url,
-      toFile: mainPath + toPath,
+      toFile: mainPath + toPath
     });
   },
   createDirectory(path: string): Promise<void> {
@@ -41,5 +38,5 @@ export default {
   },
   getMainPath(): string {
     return mainPath;
-  },
+  }
 };

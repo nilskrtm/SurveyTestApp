@@ -2,9 +2,9 @@
 import promiseReflect from 'promise-reflect';
 import uuid from 'react-native-uuid';
 import WebUtil from '../util/WebUtil';
-import axios, {AxiosInstance, CancelTokenSource} from 'axios';
-import {SyncedVoting, VotingSyncJob} from './VotingModels';
-import {SortDescriptor, Realm} from 'realm';
+import axios, { AxiosInstance, CancelTokenSource } from 'axios';
+import { SyncedVoting, VotingSyncJob } from './VotingModels';
+import { SortDescriptor, Realm } from 'realm';
 
 type VotingSyncQueueCallbacks = {
   [key in CallbackName]: CallbackObject[];
@@ -28,17 +28,17 @@ class VotingSyncQueue {
 
   realmProvider: () => Realm = () => null as unknown as Realm;
   authInstanceProvider: () => AxiosInstance = () => axios.create();
-  concurrency: number = 5;
-  timeout: number = 0;
+  concurrency = 5;
+  timeout = 0;
   callbacks: VotingSyncQueueCallbacks = {
     onQueueStart: [],
     onQueueStop: [],
     onSyncJobStart: [],
     onSyncJobSuccess: [],
-    onSyncJobFailure: [],
+    onSyncJobFailure: []
   };
-  status: string = 'inactive';
-  processingRequestTokenSources: {[key: string]: CancelTokenSource} = {};
+  status = 'inactive';
+  processingRequestTokenSources: { [key: string]: CancelTokenSource } = {};
   syncInterval: any = null;
 
   constructor() {
@@ -93,7 +93,7 @@ class VotingSyncQueue {
     const callbackObject: CallbackObject = {
       id: uuid.v4() as string,
       callbackName: callbackName,
-      callback: callback,
+      callback: callback
     };
 
     this.callbacks[callbackName].push(callbackObject);
@@ -101,14 +101,9 @@ class VotingSyncQueue {
     return callbackObject;
   }
 
-  unregisterCallback(
-    callbackName: CallbackName,
-    callbackObject: CallbackObject,
-  ) {
-    for (let i in this.callbacks[callbackName]) {
-      if (
-        this.callbacks[callbackName][parseInt(i, 10)].id === callbackObject.id
-      ) {
+  unregisterCallback(callbackName: CallbackName, callbackObject: CallbackObject) {
+    for (const i in this.callbacks[callbackName]) {
+      if (this.callbacks[callbackName][parseInt(i, 10)].id === callbackObject.id) {
         this.callbacks[callbackName].slice(parseInt(i, 10), 1);
 
         return;
@@ -124,10 +119,8 @@ class VotingSyncQueue {
       const syncedVotings = this.getRealm()
         .objects<SyncedVoting>('SyncedVoting')
         .sorted([['number', true]]);
-      const maxNumberVotingSyncJobs =
-        votingSyncJobs.length > 0 ? votingSyncJobs[0].number : 0;
-      const maxNumberSyncedVotings =
-        syncedVotings.length > 0 ? syncedVotings[0].number : 0;
+      const maxNumberVotingSyncJobs = votingSyncJobs.length > 0 ? votingSyncJobs[0].number : 0;
+      const maxNumberSyncedVotings = syncedVotings.length > 0 ? syncedVotings[0].number : 0;
 
       this.getRealm().create<VotingSyncJob>('VotingSyncJob', {
         _id: uuid.v4() as string,
@@ -137,7 +130,7 @@ class VotingSyncQueue {
         failState: '',
         failedInScope: false,
         surveyId: surveyId,
-        voting: JSON.stringify(voting),
+        voting: JSON.stringify(voting)
       });
     });
 
@@ -161,7 +154,7 @@ class VotingSyncQueue {
           .filtered('failedInScope != FALSE');
 
         if (jobs.length > 0) {
-          jobs = jobs.map(job => {
+          jobs = jobs.map((job) => {
             if (job) {
               job.failedInScope = false;
             }
@@ -173,7 +166,7 @@ class VotingSyncQueue {
     let concurrentJobs = this.getConcurrentJobs(tryFailed);
 
     while (this.status === 'active' && concurrentJobs.length) {
-      const processingJobs = concurrentJobs.map(job => {
+      const processingJobs = concurrentJobs.map((job) => {
         return this.processJob(job);
       });
 
@@ -190,14 +183,13 @@ class VotingSyncQueue {
 
     this.executeGeneralLifecycleCallback('onQueueStop');
 
-    for (let i in this.processingRequestTokenSources) {
-      let cancelTokenSource: CancelTokenSource =
-        this.processingRequestTokenSources[i];
+    for (const i in this.processingRequestTokenSources) {
+      const cancelTokenSource: CancelTokenSource = this.processingRequestTokenSources[i];
 
       cancelTokenSource.cancel();
     }
 
-    for (let i in this.processingRequestTokenSources) {
+    for (const i in this.processingRequestTokenSources) {
       delete this.processingRequestTokenSources[i];
     }
 
@@ -207,7 +199,7 @@ class VotingSyncQueue {
         .filtered('active != FALSE');
 
       if (jobs.length > 0) {
-        jobs = jobs.map(job => {
+        jobs = jobs.map((job) => {
           if (job) {
             job.active = false;
           }
@@ -231,7 +223,7 @@ class VotingSyncQueue {
 
     this.getRealm().write(() => {
       let nextJob: VotingSyncJob | null = null;
-      let initialQuery: string = 'active == FALSE';
+      let initialQuery = 'active == FALSE';
 
       if (!tryFailed) {
         initialQuery += ' AND failState == ""';
@@ -239,13 +231,13 @@ class VotingSyncQueue {
         initialQuery += ' AND failedInScope == FALSE';
       }
 
-      let sortingArray: SortDescriptor[] = [['created', false]];
+      const sortingArray: SortDescriptor[] = [['created', false]];
 
       if (tryFailed) {
         sortingArray.push(['failState', false]);
       }
 
-      let jobs = this.getRealm()
+      const jobs = this.getRealm()
         .objects<VotingSyncJob>('VotingSyncJob')
         .filtered(initialQuery)
         .sorted(sortingArray);
@@ -256,7 +248,7 @@ class VotingSyncQueue {
 
       if (nextJob) {
         const concurrency: number = this.getConcurrency();
-        let allRelatedJobsQuery: string = 'active == FALSE';
+        let allRelatedJobsQuery = 'active == FALSE';
 
         if (!tryFailed) {
           allRelatedJobsQuery += ' AND failState == ""';
@@ -269,13 +261,10 @@ class VotingSyncQueue {
           .filtered(allRelatedJobsQuery)
           .sorted(sortingArray);
 
-        let jobsToMarkActive: VotingSyncJob[] | void[] = allRelatedJobs.slice(
-          0,
-          concurrency,
-        );
-        const concurrentJobIds: string[] = jobsToMarkActive.map(job => job._id);
+        let jobsToMarkActive: VotingSyncJob[] | void[] = allRelatedJobs.slice(0, concurrency);
+        const concurrentJobIds: string[] = jobsToMarkActive.map((job) => job._id);
 
-        jobsToMarkActive = jobsToMarkActive.map(job => {
+        jobsToMarkActive = jobsToMarkActive.map((job) => {
           job.active = true;
           job.failState = '';
         });
@@ -311,7 +300,7 @@ class VotingSyncQueue {
           created: job.created,
           synced: new Date(),
           surveyId: job.surveyId,
-          voting: job.voting,
+          voting: job.voting
         });
         this.getRealm().delete(job);
       });
@@ -344,20 +333,13 @@ class VotingSyncQueue {
     const voting = JSON.parse(job.voting);
 
     if (this.timeout > 0) {
-      let timeoutPromise = new Promise((resolve, reject) => {
+      const timeoutPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
-          reject(
-            new Error(
-              'TIMEOUT: Job: ' + jobId + ' timed out in ' + this.timeout + 'ms',
-            ),
-          );
+          reject(new Error('TIMEOUT: Job: ' + jobId + ' timed out in ' + this.timeout + 'ms'));
         }, this.timeout);
       });
 
-      await Promise.race([
-        timeoutPromise,
-        this.sendVoting(jobId, surveyID, voting),
-      ]);
+      await Promise.race([timeoutPromise, this.sendVoting(jobId, surveyID, voting)]);
     } else {
       await this.sendVoting(jobId, surveyID, voting);
     }
@@ -365,20 +347,19 @@ class VotingSyncQueue {
 
   sendVoting(jobId: string, surveyId: string, voting: any) {
     return new Promise((resolve, reject) => {
-      let cancelTokenSource: CancelTokenSource = WebUtil.cancelToken().source();
-      let requestTokenSourceId: string = uuid.v4() as string;
+      const cancelTokenSource: CancelTokenSource = WebUtil.cancelToken().source();
+      const requestTokenSourceId: string = uuid.v4() as string;
 
-      this.processingRequestTokenSources[requestTokenSourceId] =
-        cancelTokenSource;
+      this.processingRequestTokenSources[requestTokenSourceId] = cancelTokenSource;
 
       this.getAuthInstance()
         .post('/surveys/' + surveyId + '/votings', voting, {
-          cancelToken: cancelTokenSource.token,
+          cancelToken: cancelTokenSource.token
         })
-        .then(response => {
+        .then((response) => {
           resolve(response);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(JSON.stringify(error));
           reject(error);
         })
@@ -396,9 +377,7 @@ class VotingSyncQueue {
     }, intervalMillis);
 
     console.log(
-      '[VotingSyncQueue] Interval - Started sync-interval for ' +
-        intervalMillis +
-        ' milliseconds',
+      '[VotingSyncQueue] Interval - Started sync-interval for ' + intervalMillis + ' milliseconds'
     );
   }
 
@@ -417,17 +396,13 @@ class VotingSyncQueue {
   }
 
   executeGeneralLifecycleCallback(callbackName: CallbackName) {
-    for (let i in this.callbacks[callbackName]) {
+    for (const i in this.callbacks[callbackName]) {
       this.callbacks[callbackName][parseInt(i, 10)].callback();
     }
   }
 
-  executeJobLifecycleCallback(
-    callbackName: CallbackName,
-    jobId: string,
-    jobPayload: any,
-  ) {
-    for (let i in this.callbacks[callbackName]) {
+  executeJobLifecycleCallback(callbackName: CallbackName, jobId: string, jobPayload: any) {
+    for (const i in this.callbacks[callbackName]) {
       this.callbacks[callbackName][parseInt(i, 10)].callback(jobId, jobPayload);
     }
   }

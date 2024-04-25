@@ -1,10 +1,10 @@
-import {configureStore, EnhancedStore} from '@reduxjs/toolkit';
+import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
 import generalReducer from './generalSlice';
 
 const store: EnhancedStore = configureStore({
   reducer: {
-    general: generalReducer,
-  },
+    general: generalReducer
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

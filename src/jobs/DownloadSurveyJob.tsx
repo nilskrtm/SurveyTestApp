@@ -1,4 +1,4 @@
-import {AxiosInstance} from 'axios';
+import { AxiosInstance } from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import FileUtil from '../util/FileUtil';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
@@ -32,7 +32,7 @@ class DownloadSurveyJob {
       } catch (err) {
         reject({
           message: 'Es besteht keine Verbindung zum Internet!',
-          oldRestorable: true,
+          oldRestorable: true
         });
 
         return;
@@ -45,7 +45,7 @@ class DownloadSurveyJob {
       } catch (err) {
         reject({
           message: 'Fehler beim Laden der Umfrage!',
-          oldRestorable: true,
+          oldRestorable: true
         });
 
         return;
@@ -58,7 +58,7 @@ class DownloadSurveyJob {
       } catch (err) {
         reject({
           message: 'Fehler beim Vorbereiten des Download-Ordners!',
-          oldRestorable: false,
+          oldRestorable: false
         });
 
         return;
@@ -78,15 +78,15 @@ class DownloadSurveyJob {
         });
       });
 
-      for (let i in tempAnswerPictures) {
-        let downloadNumber = parseInt(i, 10) + 1;
+      for (const i in tempAnswerPictures) {
+        const downloadNumber = parseInt(i, 10) + 1;
 
         this.stepCallback(
           'Bilder werden heruntergeladen ... (' +
             parseInt(String(downloadNumber), 10).toString() +
             '/' +
             tempAnswerPictures.length +
-            ')',
+            ')'
         );
 
         try {
@@ -94,7 +94,7 @@ class DownloadSurveyJob {
         } catch (err) {
           reject({
             message: 'Fehler beim Laden eines Bildes!',
-            oldRestorable: false,
+            oldRestorable: false
           });
 
           return;
@@ -108,7 +108,7 @@ class DownloadSurveyJob {
       } catch (err) {
         reject({
           message: 'Fehler beim Löschen der alten Abstimmungen!',
-          oldRestorable: false,
+          oldRestorable: false
         });
 
         return;
@@ -117,14 +117,14 @@ class DownloadSurveyJob {
       resolve({
         surveyId: this.surveyId,
         survey: this.survey,
-        answerPicturePaths: this.answerPicturePaths,
+        answerPicturePaths: this.answerPicturePaths
       });
     });
   }
 
   _checkInternetConnection() {
     return new Promise((resolve, reject) => {
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state) => {
         if (state.isConnected) {
           if (state.isInternetReachable !== null) {
             if (state.isInternetReachable) {
@@ -146,7 +146,7 @@ class DownloadSurveyJob {
     return new Promise((resolve, reject) => {
       this.authInstance
         .get(`/surveys/${this.surveyId}`)
-        .then(response => {
+        .then((response) => {
           this.survey = response.data.survey;
 
           resolve({});
@@ -161,16 +161,14 @@ class DownloadSurveyJob {
     return new Promise((resolve, reject) => {
       const clearDirectory = () => {
         FileUtil.readDirectory(pictureDirectory)
-          .then(files => {
+          .then((files) => {
             if (files.length === 0) {
               resolve({});
             } else {
-              let deletionPromises = [];
+              const deletionPromises = [];
 
-              for (let file of files) {
-                deletionPromises.push(
-                  FileUtil.deletePath(pictureDirectory + '/' + file),
-                );
+              for (const file of files) {
+                deletionPromises.push(FileUtil.deletePath(pictureDirectory + '/' + file));
               }
 
               Promise.all(deletionPromises)
@@ -188,7 +186,7 @@ class DownloadSurveyJob {
       };
 
       FileUtil.pathExists(pictureDirectory)
-        .then(exists => {
+        .then((exists) => {
           if (exists) {
             clearDirectory();
           } else {
@@ -209,14 +207,14 @@ class DownloadSurveyJob {
     return new Promise((resolve, reject) => {
       this.authInstance
         .get('/answer-pictures/' + answerPicture._id)
-        .then(response => {
+        .then((response) => {
           FileUtil.downloadFile(
             response.data.answerPicture.url,
-            pictureDirectory + '/' + answerPicture.fileName,
-          ).promise.then(downloadResult => {
+            pictureDirectory + '/' + answerPicture.fileName
+          ).promise.then((downloadResult) => {
             if (downloadResult.statusCode === 200) {
               this.answerPicturePaths[answerPicture._id] = {
-                path: pictureDirectory + '/' + answerPicture.fileName,
+                path: pictureDirectory + '/' + answerPicture.fileName
               };
 
               resolve({});

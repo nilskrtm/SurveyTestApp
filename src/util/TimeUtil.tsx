@@ -1,6 +1,6 @@
 export default {
   sleep(milliseconds: number): Promise<any> {
-    return new Promise(res => setTimeout(() => res(undefined), milliseconds));
+    return new Promise((res) => setTimeout(() => res(undefined), milliseconds));
   },
   getDateAsString(date: Date) {
     if (!date || isNaN(date.getDate())) {
@@ -19,5 +19,5 @@ export default {
       ('0' + date.getMinutes()).slice(-2) +
       ' Uhr'
     );
-  },
+  }
 };

@@ -6,7 +6,7 @@ import {
   TouchableHighlight,
   InteractionManager,
   KeyboardType,
-  Switch,
+  Switch
 } from 'react-native';
 import Dialog from 'react-native-dialog';
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -14,6 +14,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 type SettingCategoryProps = {
   label: string;
 };
+
 export class SettingCategory extends React.Component<SettingCategoryProps> {
   render() {
     return (
@@ -53,15 +54,12 @@ type SettingTextBoxState = {
   dialogOpen: boolean;
 };
 
-export class SettingTextBox extends React.Component<
-  SettingTextBoxProps,
-  SettingTextBoxState
-> {
+export class SettingTextBox extends React.Component<SettingTextBoxProps, SettingTextBoxState> {
   constructor(props: SettingTextBoxProps) {
     super(props);
 
     this.state = {
-      dialogOpen: false,
+      dialogOpen: false
     };
 
     this.setOpen = this.setOpen.bind(this);
@@ -72,7 +70,7 @@ export class SettingTextBox extends React.Component<
   private inputRef = React.createRef<any>();
 
   setOpen(open: boolean, callback?: () => void) {
-    this.setState({...this.state, dialogOpen: open}, callback);
+    this.setState({ ...this.state, dialogOpen: open }, callback);
   }
 
   getInputRef() {
@@ -112,16 +110,16 @@ export class SettingTextBox extends React.Component<
                     styles.settingBox,
                     {
                       opacity: 0.6,
-                      borderTopWidth: 0,
-                    },
+                      borderTopWidth: 0
+                    }
                   ]
-                : [styles.settingBox, {opacity: 0.6}]
+                : [styles.settingBox, { opacity: 0.6 }]
               : this.props.firstSetting
               ? [
                   styles.settingBox,
                   {
-                    borderTopWidth: 0,
-                  },
+                    borderTopWidth: 0
+                  }
                 ]
               : styles.settingBox
           }>
@@ -137,7 +135,7 @@ export class SettingTextBox extends React.Component<
               numberOfLines={1}
               style={
                 this.props.italicHint
-                  ? [styles.settingHint, {fontStyle: 'italic'}]
+                  ? [styles.settingHint, { fontStyle: 'italic' }]
                   : styles.settingHint
               }>
               {this.props.hint}
@@ -147,25 +145,17 @@ export class SettingTextBox extends React.Component<
           <Dialog.Container
             visible={this.state.dialogOpen}
             onBackdropPress={
-              this.props.handleCancel
-                ? this.props.handleCancel
-                : this.defaultHandleButtons
+              this.props.handleCancel ? this.props.handleCancel : this.defaultHandleButtons
             }
             onRequestClose={
-              this.props.handleCancel
-                ? this.props.handleCancel
-                : this.defaultHandleButtons
+              this.props.handleCancel ? this.props.handleCancel : this.defaultHandleButtons
             }
             verticalButtons={false}>
             <Dialog.Title>
-              {this.props.dialogTitle
-                ? this.props.dialogTitle
-                : this.props.title}
+              {this.props.dialogTitle ? this.props.dialogTitle : this.props.title}
             </Dialog.Title>
             {this.props.dialogDescription && (
-              <Dialog.Description>
-                {this.props.dialogDescription}
-              </Dialog.Description>
+              <Dialog.Description>{this.props.dialogDescription}</Dialog.Description>
             )}
             <Dialog.Input
               label={this.props.dialogInputLabel}
@@ -178,28 +168,16 @@ export class SettingTextBox extends React.Component<
             />
             <Dialog.Button
               color="#6404ec"
-              label={
-                this.props.dialogCancelLabel
-                  ? this.props.dialogCancelLabel
-                  : 'Abbrechen'
-              }
+              label={this.props.dialogCancelLabel ? this.props.dialogCancelLabel : 'Abbrechen'}
               onPress={
-                this.props.handleCancel
-                  ? this.props.handleCancel
-                  : this.defaultHandleButtons
+                this.props.handleCancel ? this.props.handleCancel : this.defaultHandleButtons
               }
             />
             <Dialog.Button
               color="#6404ec"
-              label={
-                this.props.dialogSubmitLabel
-                  ? this.props.dialogSubmitLabel
-                  : 'Bestätigen'
-              }
+              label={this.props.dialogSubmitLabel ? this.props.dialogSubmitLabel : 'Bestätigen'}
               onPress={
-                this.props.handleSubmit
-                  ? this.props.handleSubmit
-                  : this.defaultHandleButtons
+                this.props.handleSubmit ? this.props.handleSubmit : this.defaultHandleButtons
               }
             />
           </Dialog.Container>
@@ -218,10 +196,7 @@ type SettingBooleanBoxProps = {
   value: boolean;
 };
 
-export class SettingBooleanBox extends React.Component<
-  SettingBooleanBoxProps,
-  any
-> {
+export class SettingBooleanBox extends React.Component<SettingBooleanBoxProps, any> {
   constructor(props: SettingBooleanBoxProps) {
     super(props);
   }
@@ -241,16 +216,16 @@ export class SettingBooleanBox extends React.Component<
                     styles.settingBox,
                     {
                       opacity: 0.6,
-                      borderTopWidth: 0,
-                    },
+                      borderTopWidth: 0
+                    }
                   ]
-                : [styles.settingBox, {opacity: 0.6}]
+                : [styles.settingBox, { opacity: 0.6 }]
               : this.props.firstSetting
               ? [
                   styles.settingBox,
                   {
-                    borderTopWidth: 0,
-                  },
+                    borderTopWidth: 0
+                  }
                 ]
               : styles.settingBox
           }>
@@ -264,7 +239,7 @@ export class SettingBooleanBox extends React.Component<
           <View style={styles.settingBoxHintContainer}>
             <Switch
               thumbColor={this.props.value ? '#6404ec' : '#f4f3f4'}
-              trackColor={{false: '#767577', true: '#35027d'}}
+              trackColor={{ false: '#767577', true: '#35027d' }}
               disabled={this.props.disabled}
               value={this.props.value}
               onValueChange={this.props.onValueChange}
@@ -284,10 +259,7 @@ type SettingDummyBoxProps = {
   title: string;
 };
 
-export class SettingDummyBox extends React.Component<
-  SettingDummyBoxProps,
-  any
-> {
+export class SettingDummyBox extends React.Component<SettingDummyBoxProps, any> {
   constructor(props: SettingDummyBoxProps) {
     super(props);
   }
@@ -307,16 +279,16 @@ export class SettingDummyBox extends React.Component<
                     styles.settingBox,
                     {
                       opacity: 0.6,
-                      borderTopWidth: 0,
-                    },
+                      borderTopWidth: 0
+                    }
                   ]
-                : [styles.settingBox, {opacity: 0.6}]
+                : [styles.settingBox, { opacity: 0.6 }]
               : this.props.firstSetting
               ? [
                   styles.settingBox,
                   {
-                    borderTopWidth: 0,
-                  },
+                    borderTopWidth: 0
+                  }
                 ]
               : styles.settingBox
           }>
@@ -335,7 +307,7 @@ export class SettingDummyBox extends React.Component<
 
 const styles = StyleSheet.create({
   settingHeadlineBox: {
-    width: '100%',
+    width: '100%'
     //backgroundColor: '#F3F4F6',
   },
   settingHeadlineText: {
@@ -345,7 +317,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6404ec',
     letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    textTransform: 'uppercase'
   },
   settingBox: {
     width: '100%',
@@ -355,7 +327,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#ffffff',
     borderColor: '#e3e3e3',
-    borderTopWidth: 1,
+    borderTopWidth: 1
   },
   settingBoxInfoContainer: {
     height: '100%',
@@ -363,16 +335,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    gap: 15,
+    gap: 15
   },
   settingName: {
     fontSize: 18,
     fontWeight: '500',
     color: 'black',
-    paddingRight: 10,
+    paddingRight: 10
   },
   settingBoxSpacer: {
-    flex: 1,
+    flex: 1
   },
   settingBoxHintContainer: {
     height: '100%',
@@ -380,11 +352,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 3,
+    gap: 3
   },
   settingHint: {
     fontSize: 18,
     color: '#616161',
-    paddingLeft: 10,
-  },
+    paddingLeft: 10
+  }
 });

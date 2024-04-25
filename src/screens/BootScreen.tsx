@@ -1,16 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import TimeUtil from '../util/TimeUtil';
-import {
-  StackActions,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import { StackActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
-import {useStorage} from '../../App';
-import {useAppDispatch} from '../redux/hooks';
-import {setIsSurveyTestMode} from '../redux/generalSlice';
+import { useStorage } from '../../App';
+import { useAppDispatch } from '../redux/hooks';
+import { setIsSurveyTestMode } from '../redux/generalSlice';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
 
 function BootScreen(): React.JSX.Element {
@@ -24,10 +20,7 @@ function BootScreen(): React.JSX.Element {
   const [autoSync] = useStorage<boolean>('auto_sync', false);
   const [syncPeriod] = useStorage<string>('sync_period', '60');
   const [selectedSurvey] = useStorage<any>('selected_survey', {});
-  const [selectedSurveyValid] = useStorage<boolean>(
-    'selected_survey_valid',
-    false,
-  );
+  const [selectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
   const [answerPicturePaths] = useStorage<any>('answer_picture_paths', {});
 
   useEffect(() => {
@@ -80,9 +73,7 @@ function BootScreen(): React.JSX.Element {
       await TimeUtil.sleep(1000);
 
       if (autoSync) {
-        VotingSyncQueue.getInstance().startSyncInterval(
-          parseInt(syncPeriod, 10) * 60 * 1000,
-        );
+        VotingSyncQueue.getInstance().startSyncInterval(parseInt(syncPeriod, 10) * 60 * 1000);
       }
 
       dispatch(setIsSurveyTestMode(false));
@@ -100,28 +91,20 @@ function BootScreen(): React.JSX.Element {
   useFocusEffect(
     React.useCallback(() => {
       DeviceControllerUtil.startLockTask();
-    }, []),
+    }, [])
   );
 
   return (
     <View style={styles.container}>
       {!warning ? (
         <>
-          <ActivityIndicator
-            style={styles.spinner}
-            size="large"
-            color="#6404ec"
-          />
+          <ActivityIndicator style={styles.spinner} size="large" color="#6404ec" />
           <Text style={styles.loadingText}>App wird gestartet ...</Text>
           <Text style={styles.currentStepText}>{currentStep}</Text>
         </>
       ) : (
         <>
-          <IonIcons
-            name="information-circle-outline"
-            size={40}
-            color="#6404ec"
-          />
+          <IonIcons name="information-circle-outline" size={40} color="#6404ec" />
           <Text style={styles.loadingTextWarning}>
             Der Umfrage-Modus kann nicht gestartet werden!
           </Text>
@@ -138,25 +121,25 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFFFF'
   },
   spinner: {
-    padding: 10,
+    padding: 10
   },
   loadingText: {
     fontWeight: 'bold',
     padding: 5,
-    color: '#000000',
+    color: '#000000'
   },
   loadingTextWarning: {
     padding: 5,
     color: '#6404ec',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   currentStepText: {
     padding: 5,
-    color: '#000000',
-  },
+    color: '#000000'
+  }
 });
 
 export default BootScreen;

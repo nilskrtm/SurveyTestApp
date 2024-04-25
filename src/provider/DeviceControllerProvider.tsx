@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
-import {setIsDeviceOwner} from '../redux/generalSlice';
+import React, { useEffect } from 'react';
+import { setIsDeviceOwner } from '../redux/generalSlice';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
-import {useAppDispatch} from '../redux/hooks';
+import { useAppDispatch } from '../redux/hooks';
 
 function DeviceControllerProvider(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -16,17 +16,17 @@ function DeviceControllerProvider(): React.JSX.Element {
     initializeDeviceOwner().then();
 
     const deviceAdminEventEmitter = DeviceControllerUtil.getEventEmitter();
-    let deviceAdminEnabledEventListener = deviceAdminEventEmitter.addListener(
+    const deviceAdminEnabledEventListener = deviceAdminEventEmitter.addListener(
       'DeviceAdminEnabledEvent',
       () => {
         dispatch(setIsDeviceOwner(true));
-      },
+      }
     );
-    let deviceAdminDisabledEventListener = deviceAdminEventEmitter.addListener(
+    const deviceAdminDisabledEventListener = deviceAdminEventEmitter.addListener(
       'DeviceAdminDisabledEvent',
       () => {
         dispatch(setIsDeviceOwner(false));
-      },
+      }
     );
 
     return () => {

@@ -1,24 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import OverviewScreen from '../screens/dashboard/OverviewScreen';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '../screens/dashboard/SettingsScreen';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
-import {useAppSelector} from '../redux/hooks';
-import {
-  selectIsDeviceOwner,
-  selectIsVotingsSyncing,
-} from '../redux/generalSlice';
+import { useAppSelector } from '../redux/hooks';
+import { selectIsDeviceOwner, selectIsVotingsSyncing } from '../redux/generalSlice';
 import ChooseSurveyNavigator from './ChooseSurveyNavigator';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import TimeUtil from '../util/TimeUtil';
-import {Text} from 'react-native';
+import { Text } from 'react-native';
 import VotingsScreen from '../screens/dashboard/VotingsScreen';
 
 function HeaderRight(props: any): React.JSX.Element {
-  const [dateString, setDateString] = useState(
-    TimeUtil.getDateAsString(new Date()),
-  );
+  const [dateString, setDateString] = useState(TimeUtil.getDateAsString(new Date()));
 
   useEffect(() => {
     const refresher = setInterval(() => {
@@ -49,7 +44,7 @@ function DashboardNavigator(): React.JSX.Element {
           fontFamily: 'sans-serif-medium',
           fontWeight: '500',
           fontSize: 19,
-          marginRight: 15,
+          marginRight: 15
         }}
       />
     );
@@ -68,7 +63,7 @@ function DashboardNavigator(): React.JSX.Element {
   useFocusEffect(
     React.useCallback(() => {
       DeviceControllerUtil.stopLockTask();
-    }, []),
+    }, [])
   );
 
   return (
@@ -78,26 +73,25 @@ function DashboardNavigator(): React.JSX.Element {
         headerShown: true,
         headerRight: headerRight,
         headerStyle: {
-          backgroundColor: '#6404ec',
+          backgroundColor: '#6404ec'
         },
         headerTintColor: '#FFFFFF',
         headerTitle: 'GBU-SmartData',
         tabBarActiveTintColor: '#6404ec',
         tabBarInactiveTintColor: '#000000',
         tabBarLabelStyle: {
-          fontWeight: 'normal',
+          fontWeight: 'normal'
         },
-        unmountOnBlur: false,
+        unmountOnBlur: false
       }}>
       <Tab.Screen
         name="OverviewScreen"
         component={OverviewScreen}
         options={{
           tabBarLabel: 'Übersicht',
-          tabBarIcon: ({color, size}) =>
-            tabBarIcon('home-outline', color, size),
+          tabBarIcon: ({ color, size }) => tabBarIcon('home-outline', color, size),
           tabBarBadge: undefined,
-          tabBarBadgeStyle: {backgroundColor: '#ef4444'},
+          tabBarBadgeStyle: { backgroundColor: '#ef4444' }
         }}
       />
       <Tab.Screen
@@ -106,18 +100,17 @@ function DashboardNavigator(): React.JSX.Element {
         options={{
           unmountOnBlur: true,
           tabBarLabel: 'Abstimmungen',
-          tabBarItemStyle: syncing ? {opacity: 0.5} : {},
-          tabBarIcon: ({color, size}) =>
-            tabBarIcon('podium-outline', color, size),
+          tabBarItemStyle: syncing ? { opacity: 0.5 } : {},
+          tabBarIcon: ({ color, size }) => tabBarIcon('podium-outline', color, size),
           tabBarBadge: undefined,
-          tabBarBadgeStyle: {backgroundColor: '#ef4444'},
+          tabBarBadgeStyle: { backgroundColor: '#ef4444' }
         }}
         listeners={{
-          tabPress: event => {
+          tabPress: (event) => {
             if (syncing) {
               event.preventDefault();
             }
-          },
+          }
         }}
       />
       <Tab.Screen
@@ -125,10 +118,9 @@ function DashboardNavigator(): React.JSX.Element {
         component={ChooseSurveyNavigator}
         options={{
           tabBarLabel: 'Umfrage wählen',
-          tabBarIcon: ({color, size}) =>
-            tabBarIcon('albums-outline', color, size),
+          tabBarIcon: ({ color, size }) => tabBarIcon('albums-outline', color, size),
           tabBarBadge: undefined,
-          tabBarBadgeStyle: {backgroundColor: '#ef4444'},
+          tabBarBadgeStyle: { backgroundColor: '#ef4444' }
         }}
       />
       <Tab.Screen
@@ -136,10 +128,9 @@ function DashboardNavigator(): React.JSX.Element {
         component={SettingsScreen}
         options={{
           tabBarLabel: 'Einstellungen',
-          tabBarIcon: ({color, size}) =>
-            tabBarIcon('settings-outline', color, size),
+          tabBarIcon: ({ color, size }) => tabBarIcon('settings-outline', color, size),
           tabBarBadge: !isDeviceOwner ? '!' : undefined,
-          tabBarBadgeStyle: {backgroundColor: '#ef4444'},
+          tabBarBadgeStyle: { backgroundColor: '#ef4444' }
         }}
       />
     </Tab.Navigator>

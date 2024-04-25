@@ -1,20 +1,17 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {useStorage} from '../../../App';
+import React, { useEffect, useRef, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useStorage } from '../../../App';
 import {
   SettingBooleanBox,
   SettingCategory,
   SettingDummyBox,
-  SettingTextBox,
+  SettingTextBox
 } from '../../views/SettingViews';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import Dialog from 'react-native-dialog';
 import DeviceControllerUtil from '../../util/DeviceControllerUtil';
-import {useAppSelector} from '../../redux/hooks';
-import {
-  selectIsVotingsSyncing,
-  selectIsDeviceOwner,
-} from '../../redux/generalSlice';
+import { useAppSelector } from '../../redux/hooks';
+import { selectIsVotingsSyncing, selectIsDeviceOwner } from '../../redux/generalSlice';
 
 function SettingsScreen(): React.JSX.Element {
   const serverAddressSettingBox = useRef<any>();
@@ -24,10 +21,7 @@ function SettingsScreen(): React.JSX.Element {
   const autoSyncSettingBox = useRef<any>();
   const syncPeriodSettingBox = useRef<any>();
 
-  const [serverAddress, setServerAddress] = useStorage<string>(
-    'server_address',
-    '',
-  );
+  const [serverAddress, setServerAddress] = useStorage<string>('server_address', '');
   const [username, setUsername] = useStorage<string>('username', '');
   const [accessKey, setAccessKey] = useStorage<string>('access_key', '');
   const [kioskPin, setKioskPin] = useStorage<string>('kiosk_pin', '');
@@ -43,20 +37,19 @@ function SettingsScreen(): React.JSX.Element {
   const [editKioskPin, setEditKioskPin] = useState<string>('');
   const [editSyncPeriod, setEditSyncPeriod] = useState<string>('');
 
-  const [deviceOwnerDialogOpen, setDeviceOwnerDialogOpen] =
-    useState<boolean>(false);
+  const [deviceOwnerDialogOpen, setDeviceOwnerDialogOpen] = useState<boolean>(false);
 
   const warnings: string[] = [];
 
   if (isSyncing) {
     warnings.push(
-      'Einige Einstellungen können während aktiver Synchronisation nicht geändert werden.',
+      'Einige Einstellungen können während aktiver Synchronisation nicht geändert werden.'
     );
   }
 
   if (!isDeviceOwner) {
     warnings.push(
-      'Der Kiosk-Modus funktioniert voraussichtlich nur eingeschränkt, weil die App kein Geräte Admin ist.',
+      'Der Kiosk-Modus funktioniert voraussichtlich nur eingeschränkt, weil die App kein Geräte Admin ist.'
     );
   }
 
@@ -200,10 +193,7 @@ function SettingsScreen(): React.JSX.Element {
         />
         <SettingTextBox
           title="Rhythmus der Synchronisation"
-          hint={
-            syncPeriod +
-            (parseInt(syncPeriod, 10) === 1 ? ' Minute' : ' Minuten')
-          }
+          hint={syncPeriod + (parseInt(syncPeriod, 10) === 1 ? ' Minute' : ' Minuten')}
           icon="hourglass"
           autofocus={true}
           keyboardType="numeric"
@@ -247,11 +237,7 @@ function SettingsScreen(): React.JSX.Element {
               Der Kiosk-Modus wird danach NICHT mehr richtig funktionieren.
             </Text>
           </Dialog.Description>
-          <Dialog.Button
-            color="#ef4444"
-            label="Bestätigen"
-            onPress={() => resetDeviceOwner()}
-          />
+          <Dialog.Button color="#ef4444" label="Bestätigen" onPress={() => resetDeviceOwner()} />
           <Dialog.Button
             color="#6404ec"
             label="Abbrechen"
@@ -265,12 +251,12 @@ function SettingsScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollView: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   warningContainer: {
     width: '100%',
@@ -281,16 +267,16 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   warningText: {
     color: '#ef4444',
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '400'
   },
   redText: {
-    color: '#ef4444',
-  },
+    color: '#ef4444'
+  }
 });
 
 export default SettingsScreen;

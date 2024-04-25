@@ -1,35 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableHighlight,
-  StyleSheet,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, TouchableHighlight, StyleSheet } from 'react-native';
 import Dialog from 'react-native-dialog';
-import {useStorage} from '../../App';
+import { useStorage } from '../../App';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import {useAppSelector} from '../redux/hooks';
-import {
-  selectIsVotingsSyncing,
-  selectIsSurveyTestMode,
-} from '../redux/generalSlice';
+import { useAppSelector } from '../redux/hooks';
+import { selectIsVotingsSyncing, selectIsSurveyTestMode } from '../redux/generalSlice';
 
 type SurveyOverlayProps = {
   onPinSuccess: () => void;
 };
 
-function SurveyOverlay({onPinSuccess}: SurveyOverlayProps): React.JSX.Element {
+const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) => {
   const [pinText, setPinText] = useState<string>('');
   const [pinDialogOpen, setPinDialogOpen] = useState<boolean>(false);
   const [pinDialogTimer, setPinDialogTimer] = useState<any>(null);
 
   const [kioskPin] = useStorage<string>('kiosk_pin', '');
   const [selectedSurvey] = useStorage<any>('selected_survey', {});
-  const [selectedSurveyValid] = useStorage<boolean>(
-    'selected_survey_valid',
-    false,
-  );
+  const [selectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
 
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);
   const syncing: boolean = useAppSelector(selectIsVotingsSyncing);
@@ -65,7 +53,7 @@ function SurveyOverlay({onPinSuccess}: SurveyOverlayProps): React.JSX.Element {
     setPinDialogTimer(
       setTimeout(() => {
         closePinDialog();
-      }, 10000),
+      }, 10000)
     );
   };
 
@@ -86,14 +74,8 @@ function SurveyOverlay({onPinSuccess}: SurveyOverlayProps): React.JSX.Element {
         clearTimeout(pinDialogTimer);
         setPinDialogTimer(null);
 
-        pinSuccess();
+        props.onPinSuccess();
       }
-    }
-  };
-
-  const pinSuccess = () => {
-    if (onPinSuccess) {
-      onPinSuccess();
     }
   };
 
@@ -141,24 +123,20 @@ function SurveyOverlay({onPinSuccess}: SurveyOverlayProps): React.JSX.Element {
           keyboardType="numeric"
           maxLength={10}
           value={pinText}
-          onChangeText={text => setPinText(text)}
+          onChangeText={(text) => setPinText(text)}
         />
-        <Dialog.Button
-          color="#6404ec"
-          label="Abbruch"
-          onPress={closePinDialog}
-        />
+        <Dialog.Button color="#6404ec" label="Abbruch" onPress={closePinDialog} />
         <Dialog.Button color="#6404ec" label="Bestätigen" onPress={enterPin} />
       </Dialog.Container>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   infoContainer: {
     position: 'absolute',
     left: 0,
-    top: 0,
+    top: 0
   },
   infoWrapper: {
     display: 'flex',
@@ -167,15 +145,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 3,
     paddingLeft: 5,
-    paddingTop: 3,
+    paddingTop: 3
   },
   infoIcon: {
-    paddingTop: 1.5,
+    paddingTop: 1.5
   },
   infoText: {
     fontSize: 16,
     color: '#ef4444',
-    zIndex: 1,
+    zIndex: 1
   },
   hiddenButtonContainer: {
     position: 'absolute',
@@ -184,13 +162,13 @@ const styles = StyleSheet.create({
     zIndex: 999999,
     width: 30,
     height: 30,
-    color: 'transparent',
+    color: 'transparent'
   },
   hiddenButton: {
     width: 30,
     height: 30,
-    color: 'transparent',
-  },
+    color: 'transparent'
+  }
 });
 
 export default SurveyOverlay;
