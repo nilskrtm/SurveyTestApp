@@ -3,22 +3,22 @@ import { NativeModules, NativeEventEmitter } from 'react-native';
 const { DeviceControllerModule } = NativeModules;
 
 export default {
-  startLockTask() {
+  startLockTask(): void {
     return DeviceControllerModule.startLockTask();
   },
-  stopLockTask() {
+  stopLockTask(): void {
     return DeviceControllerModule.stopLockTask();
   },
-  async isLockTaskActive() {
+  async isLockTaskActive(): Promise<boolean> {
     return await DeviceControllerModule.isLockTaskActive();
   },
-  async isDeviceOwner() {
+  async isDeviceOwner(): Promise<boolean> {
     return await DeviceControllerModule.isDeviceOwner();
   },
-  clearDeviceOwner() {
-    return DeviceControllerModule.clearDeviceOwner();
+  async clearDeviceOwner(): Promise<boolean> {
+    return await DeviceControllerModule.clearDeviceOwner();
   },
-  getEventEmitter() {
+  getEventEmitter(): NativeEventEmitter {
     return new NativeEventEmitter(DeviceControllerModule);
   }
 };

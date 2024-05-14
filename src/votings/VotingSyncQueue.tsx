@@ -38,9 +38,9 @@ class VotingSyncQueue {
     onSyncJobSuccess: [],
     onSyncJobFailure: []
   };
-  status = 'inactive';
+  status: 'active' | 'inactive' = 'inactive';
   processingRequestTokenSources: { [key: string]: CancelTokenSource } = {};
-  syncInterval: any = null;
+  syncInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     console.log('[VotingSyncQueue] Initializing');

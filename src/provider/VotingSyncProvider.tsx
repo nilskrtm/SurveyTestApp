@@ -5,7 +5,7 @@ import { setIsVotingsSyncing } from '../redux/generalSlice';
 import { useAuthAxios } from '../util/WebUtil';
 import { useVotingRealm } from '../votings/VotingModels';
 
-function VotingSyncProvider(): React.JSX.Element {
+const VotingSyncProvider: () => React.JSX.Element = () => {
   const dispatch = useAppDispatch();
   const authInstance = useAuthAxios();
   const realm = useVotingRealm();
@@ -60,6 +60,6 @@ function VotingSyncProvider(): React.JSX.Element {
   }, [authInstance, dispatch, realm]);
 
   return <></>;
-}
+};
 
 export default VotingSyncProvider;

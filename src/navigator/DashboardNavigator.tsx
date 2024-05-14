@@ -9,14 +9,16 @@ import { selectIsDeviceOwner, selectIsVotingsSyncing } from '../redux/generalSli
 import ChooseSurveyNavigator from './ChooseSurveyNavigator';
 import { useFocusEffect } from '@react-navigation/native';
 import TimeUtil from '../util/TimeUtil';
-import { Text } from 'react-native';
+import { StyleProp, Text, TextStyle } from 'react-native';
 import VotingsScreen from '../screens/dashboard/VotingsScreen';
 
-function HeaderRight(props: any): React.JSX.Element {
+const HeaderRight: (props: { style?: StyleProp<TextStyle> | undefined }) => React.JSX.Element = (
+  props
+) => {
   const [dateString, setDateString] = useState(TimeUtil.getDateAsString(new Date()));
 
   useEffect(() => {
-    const refresher = setInterval(() => {
+    const refresher: ReturnType<typeof setInterval> = setInterval(() => {
       setDateString(TimeUtil.getDateAsString(new Date()));
     }, 1000);
 
@@ -24,19 +26,23 @@ function HeaderRight(props: any): React.JSX.Element {
   }, []);
 
   return <Text style={props.style}>{dateString}</Text>;
-}
+};
 
-function DashboardNavigator(): React.JSX.Element {
+const DashboardNavigator: () => React.JSX.Element = () => {
   const Tab = createBottomTabNavigator();
 
   const isDeviceOwner: boolean = useAppSelector(selectIsDeviceOwner);
   const syncing: boolean = useAppSelector(selectIsVotingsSyncing);
 
-  const tabBarIcon = (name: string, color: string, size: number) => {
+  const tabBarIcon: (name: string, color: string, size: number) => React.JSX.Element = (
+    name,
+    color,
+    size
+  ) => {
     return <IonIcons name={name} size={size} color={color} />;
   };
 
-  const headerRight = () => {
+  const headerRight: () => React.JSX.Element = () => {
     return (
       <HeaderRight
         style={{
@@ -135,6 +141,6 @@ function DashboardNavigator(): React.JSX.Element {
       />
     </Tab.Navigator>
   );
-}
+};
 
 export default DashboardNavigator;

@@ -3,7 +3,7 @@ import NetInfo from '@react-native-community/netinfo';
 import FileUtil from '../util/FileUtil';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
 
-export const pictureDirectory = '/pictures';
+export const PICTURE_DIRECTORY = '/pictures';
 
 class DownloadSurveyJob {
   surveyId: string;
@@ -160,7 +160,7 @@ class DownloadSurveyJob {
   _preparePictureDirectory() {
     return new Promise((resolve, reject) => {
       const clearDirectory = () => {
-        FileUtil.readDirectory(pictureDirectory)
+        FileUtil.readDirectory(PICTURE_DIRECTORY)
           .then((files) => {
             if (files.length === 0) {
               resolve({});
@@ -168,7 +168,7 @@ class DownloadSurveyJob {
               const deletionPromises = [];
 
               for (const file of files) {
-                deletionPromises.push(FileUtil.deletePath(pictureDirectory + '/' + file));
+                deletionPromises.push(FileUtil.deletePath(PICTURE_DIRECTORY + '/' + file));
               }
 
               Promise.all(deletionPromises)
@@ -185,12 +185,12 @@ class DownloadSurveyJob {
           });
       };
 
-      FileUtil.pathExists(pictureDirectory)
+      FileUtil.pathExists(PICTURE_DIRECTORY)
         .then((exists) => {
           if (exists) {
             clearDirectory();
           } else {
-            FileUtil.createDirectory(pictureDirectory)
+            FileUtil.createDirectory(PICTURE_DIRECTORY)
               .then(() => {
                 clearDirectory();
               })
@@ -210,11 +210,11 @@ class DownloadSurveyJob {
         .then((response) => {
           FileUtil.downloadFile(
             response.data.answerPicture.url,
-            pictureDirectory + '/' + answerPicture.fileName
+            PICTURE_DIRECTORY + '/' + answerPicture.fileName
           ).promise.then((downloadResult) => {
             if (downloadResult.statusCode === 200) {
               this.answerPicturePaths[answerPicture._id] = {
-                path: pictureDirectory + '/' + answerPicture.fileName
+                path: PICTURE_DIRECTORY + '/' + answerPicture.fileName
               };
 
               resolve({});

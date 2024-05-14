@@ -11,7 +11,7 @@ import { SyncedVoting, useVotingQuery, VotingSyncJob } from '../../votings/Votin
 import { Collection, CollectionChangeSet } from 'realm';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function OverviewScreen(): React.JSX.Element {
+const OverviewScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const votingSyncJobs = useVotingQuery(VotingSyncJob);
@@ -332,7 +332,7 @@ function OverviewScreen(): React.JSX.Element {
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

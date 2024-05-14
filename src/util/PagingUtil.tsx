@@ -28,7 +28,7 @@ export default {
 
     return paging;
   },
-  roundUp(number: number, decimals: number) {
+  roundUp(number: number, decimals: number): number {
     if (decimals === 0) {
       return Math.ceil(number);
     }

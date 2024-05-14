@@ -1,8 +1,8 @@
 export default {
-  sleep(milliseconds: number): Promise<any> {
+  async sleep(milliseconds: number): Promise<any> {
     return new Promise((res) => setTimeout(() => res(undefined), milliseconds));
   },
-  getDateAsString(date: Date) {
+  getDateAsString(date: Date): string {
     if (!date || isNaN(date.getDate())) {
       return 'XX.XX.XXXX - XX:XX';
     }

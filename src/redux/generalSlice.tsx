@@ -32,9 +32,7 @@ export const generalSlice = createSlice({
 export const { setIsDeviceOwner, setIsVotingsSyncing, setIsSurveyTestMode } = generalSlice.actions;
 
 export const selectIsDeviceOwner = (state: RootState) => state.general.isDeviceOwner;
-
 export const selectIsVotingsSyncing = (state: RootState) => state.general.isVotingsSyncing;
-
 export const selectIsSurveyTestMode = (state: RootState) => state.general.isSurveyTestMode;
 
 export default generalSlice.reducer;

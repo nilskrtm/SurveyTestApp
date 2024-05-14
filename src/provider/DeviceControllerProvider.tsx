@@ -3,7 +3,7 @@ import { setIsDeviceOwner } from '../redux/generalSlice';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
 import { useAppDispatch } from '../redux/hooks';
 
-function DeviceControllerProvider(): React.JSX.Element {
+const DeviceControllerProvider: () => React.JSX.Element = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -38,6 +38,6 @@ function DeviceControllerProvider(): React.JSX.Element {
   }, [dispatch]);
 
   return <></>;
-}
+};
 
 export default DeviceControllerProvider;

@@ -7,7 +7,7 @@ import { useMMKVStorage } from 'react-native-mmkv-storage';
 import FileUtil from '../../util/FileUtil';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function SurveyQuestionScreen(): React.JSX.Element {
+const SurveyQuestionScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
 
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;
@@ -23,7 +23,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
 
   const [currentVoting, setCurrentVoting] = useState<any>({});
 
-  const displayQuestion = (order: number) => {
+  const displayQuestion: (order: number) => void = (order) => {
     stopTimer();
     setQuestionReady(false);
     progressViewAnimation.setValue(1);
@@ -75,7 +75,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
     }
   };
 
-  const questionDisplayed = (order: number) => {
+  const questionDisplayed: (order: number) => void = (order) => {
     const foundQuestionObject = getQuestion(order);
 
     if (foundQuestionObject.timeout > 0) {
@@ -85,7 +85,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
     setQuestionReady(true);
   };
 
-  const startTimer = (timeout: number) => {
+  const startTimer: (timeout: number) => void = (timeout) => {
     stopTimer();
 
     setQuestionTimer(
@@ -114,7 +114,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
     progressViewAnimation.setValue(0);
   };
 
-  const onClickAnswerOption = (answerOptionObject: any) => {
+  const onClickAnswerOption: (answerOptionObject: any) => void = (answerOptionObject) => {
     const currentVotes = currentVoting.votes;
     let exists = false;
 
@@ -159,13 +159,13 @@ function SurveyQuestionScreen(): React.JSX.Element {
     });
   };
 
-  const getQuestion = (questionNumber: number) => {
+  const getQuestion: (questionNumber: number) => any = (questionNumber) => {
     return selectedSurvey.questions.filter((questionObject: any) => {
       return questionObject.order === questionNumber;
     })[0];
   };
 
-  const getImageURI = (answerOptionObject: any) => {
+  const getImageURI: (answerOptionObject: any) => string = (answerOptionObject) => {
     return (
       'file://' +
       FileUtil.getMainPath() +
@@ -268,7 +268,7 @@ function SurveyQuestionScreen(): React.JSX.Element {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

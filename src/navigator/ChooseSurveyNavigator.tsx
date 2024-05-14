@@ -3,9 +3,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ChooseSurveyScreen from '../screens/dashboard/choose-survey/ChooseSurveyScreen';
 import ChooseSurveySubmitScreen from '../screens/dashboard/choose-survey/ChooseSurveySubmitScreen';
 
-function ChooseSurveyNavigator(): React.JSX.Element {
+const ChooseSurveyNavigator: () => React.JSX.Element = () => {
   const Stack = createNativeStackNavigator();
-  //const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   useEffect(() => {
     console.log('[Lifecycle] Mount - ChooseSurveyNavigator');
@@ -43,6 +43,6 @@ function ChooseSurveyNavigator(): React.JSX.Element {
       <Stack.Screen name="ChooseSurveySubmitScreen" component={ChooseSurveySubmitScreen} />
     </Stack.Navigator>
   );
-}
+};
 
 export default ChooseSurveyNavigator;

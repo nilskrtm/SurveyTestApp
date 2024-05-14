@@ -55,9 +55,9 @@ function SettingsScreen(): React.JSX.Element {
   }
 
   const resetDeviceOwner = () => {
-    DeviceControllerUtil.clearDeviceOwner();
-
-    setDeviceOwnerDialogOpen(false);
+    DeviceControllerUtil.clearDeviceOwner()
+      .then(() => setDeviceOwnerDialogOpen(false))
+      .catch(() => setDeviceOwnerDialogOpen(false));
   };
 
   useEffect(() => {

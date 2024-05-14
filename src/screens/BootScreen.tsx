@@ -10,7 +10,7 @@ import { useAppDispatch } from '../redux/hooks';
 import { setIsSurveyTestMode } from '../redux/generalSlice';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
 
-function BootScreen(): React.JSX.Element {
+const BootScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
@@ -114,7 +114,7 @@ function BootScreen(): React.JSX.Element {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -8,7 +8,7 @@ import { storage } from '../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function SurveyEndScreen(): React.JSX.Element {
+const SurveyEndScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);
@@ -101,7 +101,7 @@ function SurveyEndScreen(): React.JSX.Element {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

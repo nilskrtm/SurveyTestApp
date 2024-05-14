@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, Cancel, CancelTokenStatic } from 'axios';
+import axios, { AxiosInstance, CancelTokenStatic } from 'axios';
 import base64 from 'base-64';
 import { storage } from '../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
@@ -11,7 +11,7 @@ authInstance.interceptors.request.use((config) => {
   return config;
 });
 
-export const useAuthAxios = () => {
+export const useAuthAxios: () => AxiosInstance = () => {
   const [serverHost] = useMMKVStorage<string>('server_address', storage, '');
   const [username] = useMMKVStorage<string>('username', storage, '');
   const [accessKey] = useMMKVStorage<string>('access_key', storage, '');
@@ -27,7 +27,7 @@ export default {
   cancelToken(): CancelTokenStatic {
     return axios.CancelToken;
   },
-  isCancelled(error: any): error is Cancel {
+  isCancelled(error: any): boolean {
     return axios.isCancel(error);
   }
 };

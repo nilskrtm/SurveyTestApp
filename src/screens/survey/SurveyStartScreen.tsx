@@ -13,7 +13,7 @@ import { storage } from '../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
-function SurveyStartScreen(): React.JSX.Element {
+const SurveyStartScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
 
   const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
@@ -132,7 +132,7 @@ function SurveyStartScreen(): React.JSX.Element {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

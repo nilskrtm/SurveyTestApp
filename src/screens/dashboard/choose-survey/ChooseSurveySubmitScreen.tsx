@@ -29,7 +29,7 @@ type ChooseSurveySubmitScreenData = {
   selectErrorText: string;
 };
 
-function ChooseSurveySubmitScreen(): React.JSX.Element {
+const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
   const authAxios = useAuthAxios();
   const navigation = useNavigation();
   const route = useRoute();
@@ -68,7 +68,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
     }
 
     authAxios
-      .get(`/surveys/${state.surveyId}`)
+      .get('/surveys/' + state.surveyId)
       .then((response) => {
         const survey: any = response.data.survey;
         const answerPictureUrls: { [key: string]: any } = {};
@@ -127,7 +127,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
       });
   };
 
-  const leftHeader = () => {
+  const leftHeader: () => React.JSX.Element = () => {
     return (
       <TouchableHighlight activeOpacity={0.6} underlayColor="#6404ec" onPress={goBack}>
         <View
@@ -480,7 +480,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
       </Dialog.Container>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -21,7 +21,7 @@ type ChooseSurveyScreenData = {
   surveys: any[];
 };
 
-function ChooseSurveyScreen(): React.JSX.Element {
+const ChooseSurveyScreen: () => React.JSX.Element = () => {
   const authAxios = useAuthAxios();
   const navigation = useNavigation();
   const route = useRoute();
@@ -277,7 +277,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

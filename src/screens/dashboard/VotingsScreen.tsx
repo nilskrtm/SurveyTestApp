@@ -25,7 +25,7 @@ type VotingsScreenData = {
   data: any[];
 };
 
-function VotingsScreen(): React.JSX.Element {
+const VotingsScreen: () => React.JSX.Element = () => {
   const votingSyncJobs = useVotingQuery(VotingSyncJob);
   const syncedVotings = useVotingQuery(SyncedVoting);
 
@@ -343,7 +343,7 @@ function VotingsScreen(): React.JSX.Element {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
