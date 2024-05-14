@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import promiseReflect from 'promise-reflect';
 import uuid from 'react-native-uuid';

@@ -9,7 +9,6 @@ import TimeUtil from '../../util/TimeUtil';
 import { SyncedVoting, useVotingQuery, VotingSyncJob } from '../../votings/VotingModels';
 import { Collection, CollectionChangeSet } from 'realm';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
-import window from '@react-navigation/native/lib/typescript/src/__mocks__/window';
 
 function OverviewScreen(): React.JSX.Element {
   const navigation = useNavigation();
@@ -68,19 +67,19 @@ function OverviewScreen(): React.JSX.Element {
     setSyncedCount(syncedVotings.length);
 
     const votingSyncJobsListener = (
-      collection: Collection<VotingSyncJob>,
+      _collection: Collection<number, VotingSyncJob>,
       changes: CollectionChangeSet
     ) => {
       if (changes.deletions || changes.insertions) {
-        setOpenCount(collection.length);
+        setOpenCount(votingSyncJobs.length);
       }
     };
     const syncedVotingsListener = (
-      collection: Collection<SyncedVoting>,
+      _collection: Collection<number, SyncedVoting>,
       changes: CollectionChangeSet
     ) => {
       if (changes.deletions || changes.insertions) {
-        setSyncedCount(collection.length);
+        setSyncedCount(syncedVotings.length);
       }
     };
 
@@ -157,7 +156,7 @@ function OverviewScreen(): React.JSX.Element {
                 <Text style={styles.normalText}>
                   {selectedSurveyValid
                     ? TimeUtil.getDateAsString(new Date(selectedSurvey.endDate))
-                    : 'XX.XX.XXXX - XX.XX Uhr'}
+                    : 'XX.XX.XXXX XX.XX Uhr'}
                 </Text>
               </View>
             </View>
@@ -181,7 +180,11 @@ function OverviewScreen(): React.JSX.Element {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.normalText}>
-                  {selectedSurveyValid ? selectedSurvey.questions.length + ' Fragen' : 'X Fragen'}
+                  {selectedSurveyValid
+                    ? selectedSurvey.questions.length +
+                      ' Frage' +
+                      (selectedSurvey.questions.length === 1 ? '' : 'n')
+                    : 'X Fragen'}
                 </Text>
               </View>
             </View>
@@ -255,7 +258,7 @@ function OverviewScreen(): React.JSX.Element {
             </View>
             <View style={styles.generalInfoValueHolder}>
               <Text style={styles.normalText} numberOfLines={1}>
-                {openCount} Abstimmungen
+                {openCount} Abstimmung{syncedCount === 0 ? '' : 'en'}
               </Text>
             </View>
           </View>
@@ -267,7 +270,7 @@ function OverviewScreen(): React.JSX.Element {
             </View>
             <View style={styles.generalInfoValueHolder}>
               <Text style={styles.normalText} numberOfLines={1}>
-                {syncedCount} Abstimmungen
+                {syncedCount} Abstimmung{syncedCount === 0 ? '' : 'en'}
               </Text>
             </View>
           </View>

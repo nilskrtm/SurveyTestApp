@@ -43,6 +43,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
   const [state, setState] = useState<ChooseSurveySubmitScreenData>({
     loading: true,
     error: '',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     surveyId: route.params.surveyId,
     survey: null,
@@ -150,6 +151,7 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
               {
                 name: 'ChooseSurveyScreen',
                 params: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   usePagingOptions: route.params.lastPagingOptions
                 }

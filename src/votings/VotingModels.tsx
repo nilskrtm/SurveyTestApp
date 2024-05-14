@@ -1,4 +1,4 @@
-import Realm from 'realm';
+import Realm, { ObjectSchema } from 'realm';
 import { createRealmContext } from '@realm/react';
 
 export class VotingSyncJob extends Realm.Object<VotingSyncJob> {
@@ -11,7 +11,7 @@ export class VotingSyncJob extends Realm.Object<VotingSyncJob> {
   surveyId!: string;
   voting!: string;
 
-  static schema = {
+  static schema: ObjectSchema = {
     name: 'VotingSyncJob',
     properties: {
       _id: 'string',
@@ -35,7 +35,7 @@ export class SyncedVoting extends Realm.Object<SyncedVoting> {
   surveyId!: string;
   voting!: string;
 
-  static schema = {
+  static schema: ObjectSchema = {
     name: 'SyncedVoting',
     properties: {
       _id: 'string',

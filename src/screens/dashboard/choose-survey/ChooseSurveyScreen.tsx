@@ -49,7 +49,6 @@ function ChooseSurveyScreen(): React.JSX.Element {
     authAxios
       .get(`/surveys?page=${newPagingOptions.page}`)
       .then((response) => {
-        console.log(response);
         setState({
           ...state,
           loading: false,
@@ -94,6 +93,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
       parentNavigator.setOptions({ headerLeft: undefined });
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     loadSurveys(route?.params?.usePagingOptions || state.pagingOptions);
 
@@ -167,7 +167,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
                           {TimeUtil.getDateAsString(new Date(survey.endDate))}
                         </Text>
                         <Text style={styles.infoValueText} numberOfLines={1}>
-                          {survey.questions.length} Fragen
+                          {survey.questions.length} Frage{survey.questions.length === 1 ? '' : 'n'}
                         </Text>
                       </View>
                     </View>

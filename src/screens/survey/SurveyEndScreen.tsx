@@ -18,6 +18,7 @@ function SurveyEndScreen(): React.JSX.Element {
   const [selectedSurvey] = useStorage<any>('selected_survey', {});
 
   const saveAnswerSet = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const voting = route.params.voting;
     const startDate = new Date(selectedSurvey.startDate).getTime();
