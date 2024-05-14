@@ -4,7 +4,8 @@ import { CommonActions, useNavigation, useRoute } from '@react-navigation/native
 import SurveyOverlay from '../../views/SurveyOverlayView';
 import { useAppSelector } from '../../redux/hooks';
 import { selectIsSurveyTestMode } from '../../redux/generalSlice';
-import { useStorage } from '../../../App';
+import { storage } from '../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
 function SurveyEndScreen(): React.JSX.Element {
@@ -14,8 +15,8 @@ function SurveyEndScreen(): React.JSX.Element {
 
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;
 
-  const [autoSync] = useStorage<boolean>('auto_sync', false);
-  const [selectedSurvey] = useStorage<any>('selected_survey', {});
+  const [autoSync] = useMMKVStorage<boolean>('auto_sync', storage, false);
+  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
 
   const saveAnswerSet = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

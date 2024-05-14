@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useStorage } from '../../../App';
+import { storage } from '../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import {
   SettingBooleanBox,
   SettingCategory,
@@ -14,19 +15,19 @@ import { useAppSelector } from '../../redux/hooks';
 import { selectIsVotingsSyncing, selectIsDeviceOwner } from '../../redux/generalSlice';
 
 function SettingsScreen(): React.JSX.Element {
-  const serverAddressSettingBox = useRef<any>();
-  const usernameSettingBox = useRef<any>();
-  const accessKeySettingBox = useRef<any>();
-  const kioskPinSettingBox = useRef<any>();
-  const autoSyncSettingBox = useRef<any>();
-  const syncPeriodSettingBox = useRef<any>();
+  const serverAddressSettingBox = createRef<SettingTextBox>();
+  const usernameSettingBox = createRef<SettingTextBox>();
+  const accessKeySettingBox = createRef<SettingTextBox>();
+  const kioskPinSettingBox = createRef<SettingTextBox>();
+  const autoSyncSettingBox = createRef<SettingBooleanBox>();
+  const syncPeriodSettingBox = createRef<SettingTextBox>();
 
-  const [serverAddress, setServerAddress] = useStorage<string>('server_address', '');
-  const [username, setUsername] = useStorage<string>('username', '');
-  const [accessKey, setAccessKey] = useStorage<string>('access_key', '');
-  const [kioskPin, setKioskPin] = useStorage<string>('kiosk_pin', '');
-  const [autoSync, setAutoSync] = useStorage<boolean>('auto_sync', false);
-  const [syncPeriod, setSyncPeriod] = useStorage<string>('sync_period', '60');
+  const [serverAddress, setServerAddress] = useMMKVStorage<string>('server_address', storage, '');
+  const [username, setUsername] = useMMKVStorage<string>('username', storage, '');
+  const [accessKey, setAccessKey] = useMMKVStorage<string>('access_key', storage, '');
+  const [kioskPin, setKioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
+  const [autoSync, setAutoSync] = useMMKVStorage<boolean>('auto_sync', storage, false);
+  const [syncPeriod, setSyncPeriod] = useMMKVStorage<string>('sync_period', storage, '60');
 
   const isSyncing = useAppSelector(selectIsVotingsSyncing);
   const isDeviceOwner = useAppSelector(selectIsDeviceOwner);
@@ -92,11 +93,11 @@ function SettingsScreen(): React.JSX.Element {
             setEditServerAddress(serverAddress);
           }}
           handleCancel={() => {
-            serverAddressSettingBox.current.setOpen(false);
+            serverAddressSettingBox.current?.setOpen(false);
             setEditServerAddress(serverAddress);
           }}
           handleSubmit={() => {
-            serverAddressSettingBox.current.setOpen(false);
+            serverAddressSettingBox.current?.setOpen(false);
             setServerAddress(editServerAddress);
           }}
           onChangeText={(text: string) => {
@@ -117,14 +118,15 @@ function SettingsScreen(): React.JSX.Element {
             setEditUsername(username);
           }}
           handleCancel={() => {
-            usernameSettingBox.current.setOpen(false);
+            usernameSettingBox.current?.setOpen(false);
             setEditUsername(username);
           }}
           handleSubmit={() => {
-            usernameSettingBox.current.setOpen(false);
+            usernameSettingBox.current?.setOpen(false);
             setUsername(editUsername);
           }}
           onChangeText={(text: any) => {
+            // do not use trim(), because also inner whitespaces should be replaced
             setEditUsername(text.replace(/ /g, ''));
           }}
         />
@@ -142,11 +144,11 @@ function SettingsScreen(): React.JSX.Element {
             setEditAccessKey(accessKey);
           }}
           handleCancel={() => {
-            accessKeySettingBox.current.setOpen(false);
+            accessKeySettingBox.current?.setOpen(false);
             setEditAccessKey(accessKey);
           }}
           handleSubmit={() => {
-            accessKeySettingBox.current.setOpen(false);
+            accessKeySettingBox.current?.setOpen(false);
             setAccessKey(editAccessKey);
           }}
           onChangeText={(text: string) => {
@@ -169,11 +171,11 @@ function SettingsScreen(): React.JSX.Element {
             setEditKioskPin(kioskPin);
           }}
           handleCancel={() => {
-            kioskPinSettingBox.current.setOpen(false);
+            kioskPinSettingBox.current?.setOpen(false);
             setEditKioskPin(kioskPin);
           }}
           handleSubmit={() => {
-            kioskPinSettingBox.current.setOpen(false);
+            kioskPinSettingBox.current?.setOpen(false);
             setKioskPin(editKioskPin);
           }}
           onChangeText={(text: string) => {
@@ -204,11 +206,11 @@ function SettingsScreen(): React.JSX.Element {
             setEditSyncPeriod(syncPeriod);
           }}
           handleCancel={() => {
-            syncPeriodSettingBox.current.setOpen(false);
+            syncPeriodSettingBox.current?.setOpen(false);
             setEditSyncPeriod(syncPeriod);
           }}
           handleSubmit={() => {
-            syncPeriodSettingBox.current.setOpen(false);
+            syncPeriodSettingBox.current?.setOpen(false);
             if (!editSyncPeriod) {
               setEditSyncPeriod('60');
             }

@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
-import { useStorage } from '../../../App';
+import { storage } from '../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
 function SurveyStartScreen(): React.JSX.Element {
   const navigation = useNavigation();
 
-  const [selectedSurvey] = useStorage<any>('selected_survey', {});
+  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
 
   const fadeSpacerAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;
   const fadeViewAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;

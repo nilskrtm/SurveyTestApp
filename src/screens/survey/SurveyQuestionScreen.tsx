@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableHighlight, Image, Easing } from 'react-native';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
-import { useStorage } from '../../../App';
+import { storage } from '../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import FileUtil from '../../util/FileUtil';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
 
@@ -12,8 +13,8 @@ function SurveyQuestionScreen(): React.JSX.Element {
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;
   const progressViewAnimation = useRef(new Animated.Value(0)).current;
 
-  const [selectedSurvey] = useStorage<any>('selected_survey', {});
-  const [answerPicturePaths] = useStorage<any>('answer_picture_paths', {});
+  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [answerPicturePaths] = useMMKVStorage<any>('answer_picture_paths', storage, {});
 
   const [question, setQuestion] = useState<any>({});
   const [questionLoaded, setQuestionLoaded] = useState<boolean>(false);

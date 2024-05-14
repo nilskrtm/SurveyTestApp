@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { useAuthAxios } from '../../../util/WebUtil';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { useStorage } from '../../../../App';
+import { storage } from '../../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import TimeUtil from '../../../util/TimeUtil';
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 
@@ -25,9 +26,9 @@ function ChooseSurveyScreen(): React.JSX.Element {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const [serverAddress] = useStorage<string>('server_address', '');
-  const [username] = useStorage<string>('username', '');
-  const [accessKey] = useStorage<string>('access_key', '');
+  const [serverAddress] = useMMKVStorage<string>('server_address', storage, '');
+  const [username] = useMMKVStorage<string>('username', storage, '');
+  const [accessKey] = useMMKVStorage<string>('access_key', storage, '');
 
   const [state, setState] = useState<ChooseSurveyScreenData>({
     loading: true,
@@ -47,7 +48,7 @@ function ChooseSurveyScreen(): React.JSX.Element {
     setState({ ...state, loading: true, error: '' });
 
     authAxios
-      .get(`/surveys?page=${newPagingOptions.page}`)
+      .get('/surveys?page=' + newPagingOptions.page)
       .then((response) => {
         setState({
           ...state,

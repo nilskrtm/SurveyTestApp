@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import BootScreen from './src/screens/BootScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { MMKVLoader, create } from 'react-native-mmkv-storage';
+import { MMKVLoader } from 'react-native-mmkv-storage';
 import DashboardNavigator from './src/navigator/DashboardNavigator';
 import SurveyNavigator from './src//navigator/SurveyNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -44,6 +44,6 @@ const App: () => React.JSX.Element = () => {
   );
 };
 
-export const useStorage = create(new MMKVLoader().initialize());
+export const storage = new MMKVLoader().initialize();
 
 export default App;

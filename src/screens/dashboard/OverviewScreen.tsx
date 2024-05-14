@@ -4,7 +4,8 @@ import { StackActions, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { selectIsVotingsSyncing, setIsSurveyTestMode } from '../../redux/generalSlice';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { useStorage } from '../../../App';
+import { storage } from '../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import TimeUtil from '../../util/TimeUtil';
 import { SyncedVoting, useVotingQuery, VotingSyncJob } from '../../votings/VotingModels';
 import { Collection, CollectionChangeSet } from 'realm';
@@ -19,9 +20,9 @@ function OverviewScreen(): React.JSX.Element {
   const [openCount, setOpenCount] = useState<number>(0);
   const [syncedCount, setSyncedCount] = useState<number>(0);
 
-  const [kioskPin] = useStorage<string>('kiosk_pin', '');
-  const [selectedSurvey] = useStorage<any>('selected_survey', {});
-  const [selectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
+  const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
+  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurveyValid] = useMMKVStorage<boolean>('selected_survey_valid', storage, false);
 
   const syncing: boolean = useAppSelector(selectIsVotingsSyncing);
 
@@ -142,7 +143,7 @@ function OverviewScreen(): React.JSX.Element {
                 <Text style={styles.normalText}>
                   {selectedSurveyValid
                     ? TimeUtil.getDateAsString(new Date(selectedSurvey.startDate))
-                    : 'XX.XX.XXXX - XX.XX Uhr'}
+                    : 'XX.XX.XXXX XX.XX Uhr'}
                 </Text>
               </View>
             </View>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, TouchableHighlight, StyleSheet } from 'react-native';
 import Dialog from 'react-native-dialog';
-import { useStorage } from '../../App';
+import { storage } from '../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useAppSelector } from '../redux/hooks';
 import { selectIsVotingsSyncing, selectIsSurveyTestMode } from '../redux/generalSlice';
@@ -15,9 +16,9 @@ const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) 
   const [pinDialogOpen, setPinDialogOpen] = useState<boolean>(false);
   const [pinDialogTimer, setPinDialogTimer] = useState<any>(null);
 
-  const [kioskPin] = useStorage<string>('kiosk_pin', '');
-  const [selectedSurvey] = useStorage<any>('selected_survey', {});
-  const [selectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
+  const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
+  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurveyValid] = useMMKVStorage<boolean>('selected_survey_valid', storage, false);
 
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);
   const syncing: boolean = useAppSelector(selectIsVotingsSyncing);

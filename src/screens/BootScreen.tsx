@@ -4,7 +4,8 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import TimeUtil from '../util/TimeUtil';
 import { StackActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
-import { useStorage } from '../../App';
+import { storage } from '../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import { useAppDispatch } from '../redux/hooks';
 import { setIsSurveyTestMode } from '../redux/generalSlice';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
@@ -16,12 +17,12 @@ function BootScreen(): React.JSX.Element {
   const [currentStep, setCurrentStep] = useState<string>('');
   const [warning, setWarning] = useState<string>('');
 
-  const [kioskPin] = useStorage<string>('kiosk_pin', '');
-  const [autoSync] = useStorage<boolean>('auto_sync', false);
-  const [syncPeriod] = useStorage<string>('sync_period', '60');
-  const [selectedSurvey] = useStorage<any>('selected_survey', {});
-  const [selectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
-  const [answerPicturePaths] = useStorage<any>('answer_picture_paths', {});
+  const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
+  const [autoSync] = useMMKVStorage<boolean>('auto_sync', storage, false);
+  const [syncPeriod] = useMMKVStorage<string>('sync_period', storage, '60');
+  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurveyValid] = useMMKVStorage<boolean>('selected_survey_valid', storage, false);
+  const [answerPicturePaths] = useMMKVStorage<any>('answer_picture_paths', storage, {});
 
   useEffect(() => {
     console.log('[Lifecycle] Mount - BootScreen');

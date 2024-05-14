@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { useStorage } from '../../../../App';
+import { storage } from '../../../../App';
+import { useMMKVStorage } from 'react-native-mmkv-storage';
 import { useAuthAxios } from '../../../util/WebUtil';
 import DownloadSurveyJob from '../../../jobs/DownloadSurveyJob';
 import TimeUtil from '../../../util/TimeUtil';
@@ -33,12 +34,16 @@ function ChooseSurveySubmitScreen(): React.JSX.Element {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const [serverAddress] = useStorage<string>('server_address', '');
-  const [username] = useStorage<string>('username', '');
-  const [accessKey] = useStorage<string>('access_key', '');
-  const [, setSelectedSurvey] = useStorage<any>('selected_survey', {});
-  const [, setSelectedSurveyValid] = useStorage<boolean>('selected_survey_valid', false);
-  const [, setAnswerPicturePaths] = useStorage<any>('answer_picture_paths', {});
+  const [serverAddress] = useMMKVStorage<string>('server_address', storage, '');
+  const [username] = useMMKVStorage<string>('username', storage, '');
+  const [accessKey] = useMMKVStorage<string>('access_key', storage, '');
+  const [, setSelectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [, setSelectedSurveyValid] = useMMKVStorage<boolean>(
+    'selected_survey_valid',
+    storage,
+    false
+  );
+  const [, setAnswerPicturePaths] = useMMKVStorage<any>('answer_picture_paths', storage, {});
 
   const [state, setState] = useState<ChooseSurveySubmitScreenData>({
     loading: true,
