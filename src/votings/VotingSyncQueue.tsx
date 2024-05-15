@@ -2,13 +2,12 @@
 // @ts-ignore
 import promiseReflect from 'promise-reflect';
 import uuid from 'react-native-uuid';
-import WebUtil from '../util/WebUtil';
 import { CancelTokenSource } from 'axios';
 import { SyncedVoting, VotingSyncJob } from './VotingModels';
 import { SortDescriptor, Realm } from 'realm';
 import { Voting } from '../data/types/voting.types.ts';
 import VotingsService from '../data/services/votings.service.ts';
-import { APIError } from '../data/types/common.types.ts';
+import API from '../data/api.ts';
 
 type VotingSyncQueueCallbacks = {
   [key in CallbackName]: CallbackObject[];
@@ -318,7 +317,7 @@ class VotingSyncQueue {
           }
         }
 
-        if (WebUtil.isCancelled(error)) {
+        if (API.isCancelled(error)) {
           job.failState = '';
         }
       });
@@ -347,7 +346,7 @@ class VotingSyncQueue {
 
   sendVoting(jobId: string, surveyId: string, voting: Omit<Voting, '_id'>) {
     return new Promise((resolve, reject) => {
-      const cancelTokenSource: CancelTokenSource = WebUtil.cancelToken().source();
+      const cancelTokenSource: CancelTokenSource = API.cancelToken().source();
       const requestTokenSourceId: string = uuid.v4() as string;
 
       this.processingRequestTokenSources[requestTokenSourceId] = cancelTokenSource;

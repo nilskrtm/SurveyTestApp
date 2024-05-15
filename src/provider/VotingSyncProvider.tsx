@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import VotingSyncQueue, { CallbackObject } from '../votings/VotingSyncQueue';
 import { useAppDispatch } from '../redux/hooks';
 import { setIsVotingsSyncing } from '../redux/generalSlice';
-import { useAuthAxios } from '../util/WebUtil';
 import { useVotingRealm } from '../votings/VotingModels';
 
 const VotingSyncProvider: () => React.JSX.Element = () => {
   const dispatch = useAppDispatch();
-  const authInstance = useAuthAxios();
   const realm = useVotingRealm();
 
   useEffect(() => {
@@ -56,7 +54,7 @@ const VotingSyncProvider: () => React.JSX.Element = () => {
         VotingSyncQueue.getInstance().unregisterCallback(callbacks[i].callbackName, callbacks[i]);
       }
     };
-  }, [authInstance, dispatch, realm]);
+  }, [dispatch, realm]);
 
   return <></>;
 };
