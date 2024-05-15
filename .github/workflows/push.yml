@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Setup Java
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -25,7 +25,7 @@ jobs:
           cache: 'npm'
       - name: Install Node Packages
         run: npm ci --no-fund
-      - name: Setup Keystore
+      - name: Set up Keystore
         env:
           APP_RELEASE_STORE_PASSWORD: ${{ secrets.APP_RELEASE_STORE_PASSWORD  }}
           APP_RELEASE_KEY_PASSWORD: ${{ secrets.APP_RELEASE_KEY_PASSWORD  }}
