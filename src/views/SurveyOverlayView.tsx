@@ -14,7 +14,7 @@ type SurveyOverlayProps = {
 const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) => {
   const [pinText, setPinText] = useState<string>('');
   const [pinDialogOpen, setPinDialogOpen] = useState<boolean>(false);
-  const [pinDialogTimer, setPinDialogTimer] = useState<any>(null);
+  const [pinDialogTimer, setPinDialogTimer] = useState<ReturnType<typeof setTimeout>>();
 
   const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
   const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
@@ -36,7 +36,6 @@ const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) 
       if (currentDate < startDate) {
         return 'Zeitraum der Umfrage noch nicht gestartet';
       }
-
       if (currentDate > endDate) {
         return 'Zeitraum der Umfrage bereits beendet';
       }
@@ -59,9 +58,9 @@ const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) 
   };
 
   const closePinDialog = () => {
-    if (pinDialogTimer != null) {
+    if (pinDialogTimer) {
       clearTimeout(pinDialogTimer);
-      setPinDialogTimer(null);
+      setPinDialogTimer(undefined);
     }
 
     setPinDialogOpen(false);
@@ -71,9 +70,9 @@ const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) 
     setPinDialogOpen(false);
 
     if (pinText.localeCompare(kioskPin) === 0) {
-      if (pinDialogTimer != null) {
+      if (pinDialogTimer) {
         clearTimeout(pinDialogTimer);
-        setPinDialogTimer(null);
+        setPinDialogTimer(undefined);
 
         props.onPinSuccess();
       }

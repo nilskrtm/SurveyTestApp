@@ -19,7 +19,7 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
   const [question, setQuestion] = useState<any>({});
   const [questionLoaded, setQuestionLoaded] = useState<boolean>(false);
   const [questionReady, setQuestionReady] = useState<boolean>(false);
-  const [questionTimer, setQuestionTimer] = useState<any>(null);
+  const [questionTimer, setQuestionTimer] = useState<ReturnType<typeof setTimeout>>();
 
   const [currentVoting, setCurrentVoting] = useState<any>({});
 
@@ -105,9 +105,9 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
   };
 
   const stopTimer = () => {
-    if (questionTimer != null) {
+    if (questionTimer) {
       clearTimeout(questionTimer);
-      setQuestionTimer(null);
+      setQuestionTimer(undefined);
     }
 
     progressViewAnimation.stopAnimation();

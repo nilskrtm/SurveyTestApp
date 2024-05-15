@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component, createRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,8 @@ import {
   TouchableHighlight,
   InteractionManager,
   KeyboardType,
-  Switch
+  Switch,
+  TextInput
 } from 'react-native';
 import Dialog from 'react-native-dialog';
 import IonIcons from 'react-native-vector-icons/Ionicons';
@@ -37,15 +38,15 @@ type SettingTextBoxProps = {
   dialogSubmitLabel?: string;
   disabled?: boolean;
   firstSetting?: boolean;
-  handleCancel?: () => any;
-  handleSubmit?: () => any;
+  handleCancel?: () => void;
+  handleSubmit?: () => void;
   hint: string;
   icon: string;
   italicHint?: boolean;
   keyboardType?: KeyboardType;
   maxLength?: number;
-  onChangeText?: (text: string) => any;
-  onOpen?: () => any;
+  onChangeText?: (text: string) => void;
+  onOpen?: () => void;
   title: string;
   value: string;
 };
@@ -54,7 +55,7 @@ type SettingTextBoxState = {
   dialogOpen: boolean;
 };
 
-export class SettingTextBox extends React.Component<SettingTextBoxProps, SettingTextBoxState> {
+export class SettingTextBox extends Component<SettingTextBoxProps, SettingTextBoxState> {
   constructor(props: SettingTextBoxProps) {
     super(props);
 
@@ -67,7 +68,7 @@ export class SettingTextBox extends React.Component<SettingTextBoxProps, Setting
     this.defaultHandleButtons = this.defaultHandleButtons.bind(this);
   }
 
-  private inputRef = React.createRef<any>();
+  private inputRef = createRef<TextInput>();
 
   setOpen(open: boolean, callback?: () => void) {
     this.setState({ ...this.state, dialogOpen: open }, callback);
@@ -96,7 +97,7 @@ export class SettingTextBox extends React.Component<SettingTextBoxProps, Setting
 
               if (this.props.autofocus) {
                 InteractionManager.runAfterInteractions(() => {
-                  this.inputRef.current.focus();
+                  this.inputRef.current?.focus();
                 });
               }
             });
@@ -191,12 +192,12 @@ type SettingBooleanBoxProps = {
   disabled?: boolean;
   firstSetting?: boolean;
   icon: string;
-  onValueChange: (value: any) => any;
+  onValueChange: () => void;
   title: string;
   value: boolean;
 };
 
-export class SettingBooleanBox extends React.Component<SettingBooleanBoxProps, any> {
+export class SettingBooleanBox extends React.Component<SettingBooleanBoxProps> {
   constructor(props: SettingBooleanBoxProps) {
     super(props);
   }
@@ -255,11 +256,11 @@ type SettingDummyBoxProps = {
   disabled?: boolean;
   firstSetting?: boolean;
   icon: string;
-  onPress: (value: any) => any;
+  onPress: () => void;
   title: string;
 };
 
-export class SettingDummyBox extends React.Component<SettingDummyBoxProps, any> {
+export class SettingDummyBox extends Component<SettingDummyBoxProps> {
   constructor(props: SettingDummyBoxProps) {
     super(props);
   }

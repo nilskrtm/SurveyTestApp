@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { createRef, useCallback, useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -29,7 +29,7 @@ const VotingsScreen: () => React.JSX.Element = () => {
   const votingSyncJobs = useVotingQuery(VotingSyncJob);
   const syncedVotings = useVotingQuery(SyncedVoting);
 
-  const dropdownRef = useRef<any>();
+  const dropdownRef = createRef<TouchableOpacity>();
 
   const [state, setState] = useState<VotingsScreenData>({
     dropdownOpen: false,

@@ -14,6 +14,7 @@ import VotingSyncQueue from '../../votings/VotingSyncQueue';
 const OverviewScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+
   const votingSyncJobs = useVotingQuery(VotingSyncJob);
   const syncedVotings = useVotingQuery(SyncedVoting);
 

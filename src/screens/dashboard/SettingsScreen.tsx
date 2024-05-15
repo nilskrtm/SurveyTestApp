@@ -125,7 +125,7 @@ function SettingsScreen(): React.JSX.Element {
             usernameSettingBox.current?.setOpen(false);
             setUsername(editUsername);
           }}
-          onChangeText={(text: any) => {
+          onChangeText={(text) => {
             // do not use trim(), because also inner whitespaces should be replaced
             setEditUsername(text.replace(/ /g, ''));
           }}
@@ -178,7 +178,7 @@ function SettingsScreen(): React.JSX.Element {
             kioskPinSettingBox.current?.setOpen(false);
             setKioskPin(editKioskPin);
           }}
-          onChangeText={(text: string) => {
+          onChangeText={(text) => {
             setEditKioskPin(text.replace(/[^0-9]/g, ''));
           }}
         />
@@ -217,7 +217,7 @@ function SettingsScreen(): React.JSX.Element {
             // TODO - add maximum and minimum
             setSyncPeriod(editSyncPeriod);
           }}
-          onChangeText={(text: string) => {
+          onChangeText={(text) => {
             setEditSyncPeriod(text.replace(/[^0-9]/g, ''));
           }}
         />

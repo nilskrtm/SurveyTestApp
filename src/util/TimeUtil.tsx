@@ -4,7 +4,7 @@ export default {
   },
   getDateAsString(date: Date): string {
     if (!date || isNaN(date.getDate())) {
-      return 'XX.XX.XXXX - XX:XX';
+      return 'XX.XX.XXXX XX:XX';
     }
 
     return (

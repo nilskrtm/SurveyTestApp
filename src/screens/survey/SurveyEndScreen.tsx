@@ -11,6 +11,7 @@ import VotingSyncQueue from '../../votings/VotingSyncQueue';
 const SurveyEndScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
   const route = useRoute();
+
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);
 
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;
