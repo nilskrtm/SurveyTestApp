@@ -40,4 +40,5 @@ jobs:
       - name: Build Android App
         run: |
           cd android
+          chmod +x ./gradlew
           ./gradlew assembleRelease
