@@ -9,49 +9,92 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
-import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  CommonActions,
+  CompositeNavigationProp,
+  CompositeScreenProps,
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute
+} from '@react-navigation/native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { storage } from '../../../../App';
+import { AppNavigatorParamList, storage } from '../../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
-import { useAuthAxios } from '../../../util/WebUtil';
-import DownloadSurveyJob from '../../../jobs/DownloadSurveyJob';
+import DownloadSurveyJob, {
+  DownloadSurveyJobSuccessPayload
+} from '../../../jobs/DownloadSurveyJob';
 import TimeUtil from '../../../util/TimeUtil';
 import Dialog from 'react-native-dialog';
 import VotingSyncQueue from '../../../votings/VotingSyncQueue';
+import { Survey } from '../../../data/types/survey.types.ts';
+import {
+  AnswerPicture,
+  AnswerPicturePaths,
+  AnswerPictureUrls
+} from '../../../data/types/answer.picture.types.ts';
+import SurveyService from '../../../data/services/survey.service.ts';
+import AnswerPictureService from '../../../data/services/answer.picture.service.ts';
+import { APIResponse } from '../../../data/types/common.types.ts';
+import { ChooseSurveyNavigatorParamList } from '../../../navigator/ChooseSurveyNavigator.tsx';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp, BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { DashboardNavigatorParamList } from '../../../navigator/DashboardNavigator.tsx';
+
+type ChooseSurveySubmitScreenNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<ChooseSurveyNavigatorParamList, 'ChooseSurveySubmitScreen'>,
+  CompositeNavigationProp<
+    BottomTabNavigationProp<DashboardNavigatorParamList, 'ChooseSurveyNavigator'>,
+    NativeStackNavigationProp<AppNavigatorParamList>
+  >
+>;
+
+type ChooseSurveySubmitScreenRouteProp = CompositeScreenProps<
+  NativeStackScreenProps<ChooseSurveyNavigatorParamList, 'ChooseSurveySubmitScreen'>,
+  CompositeScreenProps<
+    BottomTabScreenProps<DashboardNavigatorParamList, 'ChooseSurveyNavigator'>,
+    NativeStackScreenProps<AppNavigatorParamList>
+  >
+>;
 
 type ChooseSurveySubmitScreenData = {
   loading: boolean;
   error: string;
   surveyId: string;
-  survey: any;
+  survey?: Survey;
   isSelecting: boolean;
   selectText: string;
   selectErrorText: string;
 };
 
 const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
-  const authAxios = useAuthAxios();
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<ChooseSurveySubmitScreenNavigationProp>();
+  const route = useRoute<ChooseSurveySubmitScreenRouteProp['route']>();
 
   const [serverAddress] = useMMKVStorage<string>('server_address', storage, '');
   const [username] = useMMKVStorage<string>('username', storage, '');
   const [accessKey] = useMMKVStorage<string>('access_key', storage, '');
-  const [, setSelectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [, setSelectedSurvey] = useMMKVStorage<Survey | undefined>(
+    'selected_survey',
+    storage,
+    undefined
+  );
   const [, setSelectedSurveyValid] = useMMKVStorage<boolean>(
     'selected_survey_valid',
     storage,
     false
   );
-  const [, setAnswerPicturePaths] = useMMKVStorage<any>('answer_picture_paths', storage, {});
+  const [, setAnswerPicturePaths] = useMMKVStorage<AnswerPicturePaths>(
+    'answer_picture_paths',
+    storage,
+    {}
+  );
 
   const [state, setState] = useState<ChooseSurveySubmitScreenData>({
     loading: true,
     error: '',
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     surveyId: route.params.surveyId,
-    survey: null,
+    survey: undefined,
     isSelecting: false,
     selectText: '',
     selectErrorText: ''
@@ -67,38 +110,40 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
       parentNavigator.setOptions({ headerLeft: () => leftHeader() });
     }
 
-    authAxios
-      .get('/surveys/' + state.surveyId)
-      .then((response) => {
-        const survey: any = response.data.survey;
-        const answerPictureUrls: { [key: string]: any } = {};
-        const answerPictureUrlPromises: Promise<any>[] = [];
+    SurveyService.getSurvey(state.surveyId).then((response) => {
+      if (response.success) {
+        const survey = response.data.survey;
+        const answerPictureUrls: AnswerPictureUrls = {};
 
-        survey.questions.forEach((questionObject: any) => {
-          questionObject.answerOptions.forEach((answerOptionObject: any) => {
-            if (!(answerOptionObject.picture._id in answerPictureUrls)) {
-              answerPictureUrls[answerOptionObject.picture._id] = '';
+        survey.questions.forEach((question) => {
+          question.answerOptions.forEach((answerOption) => {
+            if (!(answerOption.picture._id in answerPictureUrls)) {
+              answerPictureUrls[answerOption.picture._id] = '';
             }
           });
         });
 
+        const answerPictureUrlPromises: Array<
+          Promise<APIResponse<{ answerPicture: AnswerPicture & { url: string } }>>
+        > = new Array(Object.keys(answerPictureUrls).length);
+
         for (const i in Object.keys(answerPictureUrls)) {
-          answerPictureUrlPromises[i] = authAxios.get(
-            '/answer-pictures/' + Object.keys(answerPictureUrls)[i]
+          answerPictureUrlPromises[i] = AnswerPictureService.getAnswerPicture(
+            Object.keys(answerPictureUrls)[i]
           );
         }
 
         Promise.all(answerPictureUrlPromises)
           .then((responses) => {
             for (const i in responses) {
-              const answerPictureObject: any = responses[i].data.answerPicture;
+              const answerPicture = responses[i].data.answerPicture;
 
-              answerPictureUrls[answerPictureObject._id] = answerPictureObject.url;
+              answerPictureUrls[answerPicture._id] = answerPicture.url;
             }
 
-            survey.questions.forEach((questionObject: any) => {
-              questionObject.answerOptions.forEach((answerOptionObject: any) => {
-                answerOptionObject.picture.url = answerPictureUrls[answerOptionObject.picture._id];
+            survey.questions.forEach((question) => {
+              question.answerOptions.forEach((answerOption) => {
+                answerOption.picture.url = answerPictureUrls[answerOption.picture._id];
               });
             });
 
@@ -116,15 +161,14 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
               error: 'Fehler beim Laden der Umfrage!'
             });
           });
-      })
-      .catch((e) => {
-        console.log(JSON.stringify(e));
+      } else {
         setState({
           ...state,
           loading: false,
           error: 'Fehler beim Laden der Umfrage!'
         });
-      });
+      }
+    });
   };
 
   const leftHeader: () => React.JSX.Element = () => {
@@ -147,38 +191,19 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
   const goBack = () => {
     abortSelecting();
 
-    if (route?.params) {
-      if ('lastPagingOptions' in route.params) {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 2,
-            routes: [
-              {
-                name: 'ChooseSurveyScreen',
-                params: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  usePagingOptions: route.params.lastPagingOptions
-                }
-              }
-            ]
-          })
-        );
-
-        return;
-      }
-
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 2,
-          routes: [
-            {
-              name: 'ChooseSurveyScreen'
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 2,
+        routes: [
+          {
+            name: 'ChooseSurveyScreen',
+            params: {
+              usePagingOptions: route.params.lastPagingOptions
             }
-          ]
-        })
-      );
-    }
+          }
+        ]
+      })
+    );
   };
 
   const selectSurvey = () => {
@@ -186,7 +211,7 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
 
     setSelectSurveyDialogOpen(false);
 
-    const downloadSurveyJob = new DownloadSurveyJob(state.surveyId, authAxios);
+    const downloadSurveyJob = new DownloadSurveyJob(state.surveyId);
 
     downloadSurveyJob.onStepStart((message: string) => {
       setState({
@@ -206,7 +231,7 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
 
     downloadSurveyJob
       .start()
-      .then((result: any) => {
+      .then((result) => {
         setState({
           ...state,
           isSelecting: false,
@@ -215,8 +240,8 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
         });
 
         setSelectedSurveyValid(false);
-        setSelectedSurvey(result.survey);
-        setAnswerPicturePaths(result.answerPicturePaths);
+        setSelectedSurvey((result as DownloadSurveyJobSuccessPayload).survey);
+        setAnswerPicturePaths((result as DownloadSurveyJobSuccessPayload).answerPicturePaths);
         setSelectedSurveyValid(true);
 
         navigation.dispatch(
@@ -230,17 +255,17 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
           })
         );
       })
-      .catch((error: any) => {
-        if ('message' in error && 'oldRestorable' in error) {
+      .catch((error) => {
+        if ('message' in error && 'oldRecoverable' in error) {
           setState({
             ...state,
             isSelecting: false,
             selectErrorText: error.message
           });
 
-          if (!error.oldRestorable) {
+          if (!error.oldRecoverable) {
             setSelectedSurveyValid(false);
-            setSelectedSurvey({});
+            setSelectedSurvey(undefined);
           }
         } else {
           setState({
@@ -250,7 +275,7 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
           });
 
           setSelectedSurveyValid(false);
-          setSelectedSurvey({});
+          setSelectedSurvey(undefined);
         }
       });
   };
@@ -259,6 +284,8 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
     if (!state.isSelecting) {
       return;
     }
+
+    // TODO: abort selecting
   };
 
   useEffect(() => {

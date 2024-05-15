@@ -16,6 +16,7 @@ module.exports = {
   ],
   rules: {
     'no-console': 0,
+    'no-async-promise-executor': 0,
     'react/prop-types': 0,
     '@typescript-eslint/no-var-requires': 0,
     'react-native/no-inline-styles': 0

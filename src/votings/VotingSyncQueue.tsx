@@ -3,9 +3,12 @@
 import promiseReflect from 'promise-reflect';
 import uuid from 'react-native-uuid';
 import WebUtil from '../util/WebUtil';
-import axios, { AxiosInstance, CancelTokenSource } from 'axios';
+import { CancelTokenSource } from 'axios';
 import { SyncedVoting, VotingSyncJob } from './VotingModels';
 import { SortDescriptor, Realm } from 'realm';
+import { Voting } from '../data/types/voting.types.ts';
+import VotingsService from '../data/services/votings.service.ts';
+import { APIError } from '../data/types/common.types.ts';
 
 type VotingSyncQueueCallbacks = {
   [key in CallbackName]: CallbackObject[];
@@ -28,7 +31,6 @@ class VotingSyncQueue {
   static instance: VotingSyncQueue;
 
   realmProvider: () => Realm = () => null as unknown as Realm;
-  authInstanceProvider: () => AxiosInstance = () => axios.create();
   concurrency = 5;
   timeout = 0;
   callbacks: VotingSyncQueueCallbacks = {
@@ -58,10 +60,6 @@ class VotingSyncQueue {
     return this.realmProvider();
   }
 
-  getAuthInstance(): AxiosInstance {
-    return this.authInstanceProvider();
-  }
-
   getConcurrency(): number {
     return this.concurrency;
   }
@@ -76,10 +74,6 @@ class VotingSyncQueue {
 
   setRealmProvider(realmProvider: () => Realm): void {
     this.realmProvider = realmProvider;
-  }
-
-  setAuthInstanceProvider(authInstanceProvider: () => AxiosInstance): void {
-    this.authInstanceProvider = authInstanceProvider;
   }
 
   setConcurrency(concurrency: number) {
@@ -112,7 +106,7 @@ class VotingSyncQueue {
     }
   }
 
-  addVoting(surveyId: string, voting: any, startQueue = true) {
+  addVoting(surveyId: string, voting: Voting, startQueue = true) {
     this.getRealm().write(() => {
       const votingSyncJobs = this.getRealm()
         .objects<VotingSyncJob>('VotingSyncJob')
@@ -122,6 +116,11 @@ class VotingSyncQueue {
         .sorted([['number', true]]);
       const maxNumberVotingSyncJobs = votingSyncJobs.length > 0 ? votingSyncJobs[0].number : 0;
       const maxNumberSyncedVotings = syncedVotings.length > 0 ? syncedVotings[0].number : 0;
+      const votingWithoutId: Omit<Voting, '_id'> = {
+        survey: voting.survey,
+        date: voting.date,
+        votes: voting.votes
+      };
 
       this.getRealm().create<VotingSyncJob>('VotingSyncJob', {
         _id: uuid.v4() as string,
@@ -131,7 +130,7 @@ class VotingSyncQueue {
         failState: '',
         failedInScope: false,
         surveyId: surveyId,
-        voting: JSON.stringify(voting)
+        voting: JSON.stringify(votingWithoutId)
       });
     });
 
@@ -331,10 +330,10 @@ class VotingSyncQueue {
   async executeJob(job: VotingSyncJob) {
     const jobId = job._id;
     const surveyID = job.surveyId;
-    const voting = JSON.parse(job.voting);
+    const voting: Omit<Voting, '_id'> = JSON.parse(job.voting);
 
     if (this.timeout > 0) {
-      const timeoutPromise = new Promise((resolve, reject) => {
+      const timeoutPromise = new Promise((_resolve, reject) => {
         setTimeout(() => {
           reject(new Error('TIMEOUT: Job: ' + jobId + ' timed out in ' + this.timeout + 'ms'));
         }, this.timeout);
@@ -346,23 +345,20 @@ class VotingSyncQueue {
     }
   }
 
-  sendVoting(jobId: string, surveyId: string, voting: any) {
+  sendVoting(jobId: string, surveyId: string, voting: Omit<Voting, '_id'>) {
     return new Promise((resolve, reject) => {
       const cancelTokenSource: CancelTokenSource = WebUtil.cancelToken().source();
       const requestTokenSourceId: string = uuid.v4() as string;
 
       this.processingRequestTokenSources[requestTokenSourceId] = cancelTokenSource;
 
-      this.getAuthInstance()
-        .post('/surveys/' + surveyId + '/votings', voting, {
-          cancelToken: cancelTokenSource.token
-        })
+      VotingsService.createVoting(surveyId, voting, cancelTokenSource.token)
         .then((response) => {
-          resolve(response);
-        })
-        .catch((error) => {
-          console.log(JSON.stringify(error));
-          reject(error);
+          if (response.success) {
+            resolve(response);
+          } else {
+            reject(response.error);
+          }
         })
         .finally(() => {
           delete this.processingRequestTokenSources[requestTokenSourceId];

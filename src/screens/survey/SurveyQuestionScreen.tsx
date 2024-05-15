@@ -1,27 +1,48 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableHighlight, Image, Easing } from 'react-native';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { CommonActions, CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
-import { storage } from '../../../App';
+import { AppNavigatorParamList, storage } from '../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
 import FileUtil from '../../util/FileUtil';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
+import { Survey } from '../../data/types/survey.types.ts';
+import { Question } from '../../data/types/question.types.ts';
+import { AnswerPicturePaths } from '../../data/types/answer.picture.types.ts';
+import { AnswerOption } from '../../data/types/answer.option.types.ts';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { SurveyNavigatorParamList } from '../../navigator/SurveyNavigator.tsx';
+import { Voting } from '../../data/types/voting.types.ts';
+
+type SurveyQuestionScreenNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<SurveyNavigatorParamList, 'SurveyQuestionScreen'>,
+  NativeStackNavigationProp<AppNavigatorParamList>
+>;
 
 const SurveyQuestionScreen: () => React.JSX.Element = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<SurveyQuestionScreenNavigationProp>();
 
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;
   const progressViewAnimation = useRef(new Animated.Value(0)).current;
 
-  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
-  const [answerPicturePaths] = useMMKVStorage<any>('answer_picture_paths', storage, {});
+  const [selectedSurvey] = useMMKVStorage<Survey>('selected_survey', storage, {} as Survey);
+  const [answerPicturePaths] = useMMKVStorage<AnswerPicturePaths>(
+    'answer_picture_paths',
+    storage,
+    {}
+  );
 
-  const [question, setQuestion] = useState<any>({});
+  const [question, setQuestion] = useState<Question | undefined>(undefined);
   const [questionLoaded, setQuestionLoaded] = useState<boolean>(false);
   const [questionReady, setQuestionReady] = useState<boolean>(false);
   const [questionTimer, setQuestionTimer] = useState<ReturnType<typeof setTimeout>>();
 
-  const [currentVoting, setCurrentVoting] = useState<any>({});
+  const [currentVoting, setCurrentVoting] = useState<Voting>({
+    _id: '',
+    survey: '',
+    date: '',
+    votes: []
+  });
 
   const displayQuestion: (order: number) => void = (order) => {
     stopTimer();
@@ -43,7 +64,7 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
         duration: 600,
         useNativeDriver: true
       }).start(() => {
-        if (question.order < selectedSurvey.questions.length) {
+        if (!question || question.order < selectedSurvey.questions.length) {
           setQuestion(getQuestion(order));
 
           Animated.timing(fadeViewAnimation, {
@@ -114,7 +135,9 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
     progressViewAnimation.setValue(0);
   };
 
-  const onClickAnswerOption: (answerOptionObject: any) => void = (answerOptionObject) => {
+  const onClickAnswerOption: (answerOption: AnswerOption) => void = (answerOptionObject) => {
+    if (!question) return;
+
     const currentVotes = currentVoting.votes;
     let exists = false;
 
@@ -159,18 +182,15 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
     });
   };
 
-  const getQuestion: (questionNumber: number) => any = (questionNumber) => {
-    return selectedSurvey.questions.filter((questionObject: any) => {
-      return questionObject.order === questionNumber;
+  const getQuestion: (questionNumber: number) => Question = (questionNumber) => {
+    return selectedSurvey.questions.filter((questionObj) => {
+      return questionObj.order === questionNumber;
     })[0];
   };
 
-  const getImageURI: (answerOptionObject: any) => string = (answerOptionObject) => {
+  const getImageURI: (answerOption: AnswerOption) => string = (answerOption) => {
     return (
-      'file://' +
-      FileUtil.getMainPath() +
-      '/' +
-      answerPicturePaths[answerOptionObject.picture._id].path
+      'file://' + FileUtil.getMainPath() + '/' + answerPicturePaths[answerOption.picture._id].path
     );
   };
 
@@ -178,6 +198,9 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
     console.log('[Lifecycle] Mount - SurveyQuestionScreen');
 
     setCurrentVoting({
+      _id: '',
+      survey: '',
+      date: '',
       votes: []
     });
 
@@ -193,79 +216,85 @@ const SurveyQuestionScreen: () => React.JSX.Element = () => {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.contentContainer, { opacity: fadeViewAnimation }]}>
-        <View style={styles.questionTextContainer}>
-          <Text style={styles.questionText} adjustsFontSizeToFit={true} allowFontScaling={true}>
-            {questionLoaded ? question.question : ''}
-          </Text>
-        </View>
-        <View style={styles.answerPictureContainer}>
-          {questionLoaded
-            ? question.answerOptions.map((answerOptionObject: any, index: number) => {
-                return (
-                  <TouchableHighlight
-                    style={styles.answerPictureHolder}
-                    key={answerOptionObject._id + ' ' + index}
-                    disabled={
-                      !questionReady ||
-                      currentVoting.votes.filter((answer: any) => answer.question === question._id)
-                        .length !== 0
+      {question && (
+        <>
+          <Animated.View style={[styles.contentContainer, { opacity: fadeViewAnimation }]}>
+            <View style={styles.questionTextContainer}>
+              <Text style={styles.questionText} adjustsFontSizeToFit={true} allowFontScaling={true}>
+                {questionLoaded ? question.question : ''}
+              </Text>
+            </View>
+            <View style={styles.answerPictureContainer}>
+              {questionLoaded
+                ? question.answerOptions.map((answerOptionObject: any, index: number) => {
+                    return (
+                      <TouchableHighlight
+                        style={styles.answerPictureHolder}
+                        key={answerOptionObject._id + ' ' + index}
+                        disabled={
+                          !questionReady ||
+                          currentVoting.votes.filter(
+                            (answer: any) => answer.question === question._id
+                          ).length !== 0
+                        }
+                        onPress={() => onClickAnswerOption(answerOptionObject)}
+                        underlayColor="transparent">
+                        <Image
+                          style={styles.answerPicture}
+                          resizeMode="contain"
+                          source={{
+                            uri: getImageURI(answerOptionObject)
+                          }}
+                        />
+                      </TouchableHighlight>
+                    );
+                  })
+                : null}
+            </View>
+            <View style={styles.actionsContainer}>
+              <TouchableHighlight
+                onPress={() => abortSurvey()}
+                underlayColor="transparent"
+                activeOpacity={0.6}>
+                <Text style={styles.actionBarText}>Abbrechen</Text>
+              </TouchableHighlight>
+              <Text style={styles.actionBarText}>
+                Frage {question.order} von {selectedSurvey.questions.length}
+              </Text>
+            </View>
+          </Animated.View>
+          <Animated.View
+            style={[
+              styles.overlayStyles,
+              {
+                width: progressViewAnimation.interpolate({
+                  inputRange: [0, 0.25, 0.5, 0.75, 1],
+                  outputRange: ['0%', '25%', '50%', '75%', '100%']
+                })
+              }
+            ]}
+          />
+          <SurveyOverlay
+            onPinSuccess={() => {
+              VotingSyncQueue.getInstance().stopSyncInterval();
+
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'DashboardNavigator',
+                      state: {
+                        routes: [{ name: 'OverviewScreen' }]
+                      }
                     }
-                    onPress={() => onClickAnswerOption(answerOptionObject)}
-                    underlayColor="transparent">
-                    <Image
-                      style={styles.answerPicture}
-                      resizeMode="contain"
-                      source={{
-                        uri: getImageURI(answerOptionObject)
-                      }}
-                    />
-                  </TouchableHighlight>
-                );
-              })
-            : null}
-        </View>
-        <View style={styles.actionsContainer}>
-          <TouchableHighlight
-            onPress={() => abortSurvey()}
-            underlayColor="transparent"
-            activeOpacity={0.6}>
-            <Text style={styles.actionBarText}>Abbrechen</Text>
-          </TouchableHighlight>
-          <Text style={styles.actionBarText}>
-            Frage {question.order} von {selectedSurvey.questions.length}
-          </Text>
-        </View>
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.overlayStyles,
-          {
-            width: progressViewAnimation.interpolate({
-              inputRange: [0, 0.25, 0.5, 0.75, 1],
-              outputRange: ['0%', '25%', '50%', '75%', '100%']
-            })
-          }
-        ]}
-      />
-      <SurveyOverlay
-        onPinSuccess={() => {
-          VotingSyncQueue.getInstance().stopSyncInterval();
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                {
-                  name: 'DashboardNavigator',
-                  state: {
-                    routes: [{ name: 'OverviewScreen' }]
-                  }
-                }
-              ]
-            })
-          );
-        }}
-      />
+                  ]
+                })
+              );
+            }}
+          />
+        </>
+      )}
     </View>
   );
 };

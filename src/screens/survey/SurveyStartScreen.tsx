@@ -12,11 +12,12 @@ import SurveyOverlay from '../../views/SurveyOverlayView';
 import { storage } from '../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
+import { Survey } from '../../data/types/survey.types.ts';
 
 const SurveyStartScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
 
-  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurvey] = useMMKVStorage<Survey>('selected_survey', storage, {} as Survey);
 
   const fadeSpacerAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;
   const fadeViewAnimation = useRef<Animated.Value>(new Animated.Value(0)).current;

@@ -1,27 +1,44 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, InteractionManager } from 'react-native';
-import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  CommonActions,
+  CompositeNavigationProp,
+  CompositeScreenProps,
+  useNavigation,
+  useRoute
+} from '@react-navigation/native';
 import SurveyOverlay from '../../views/SurveyOverlayView';
 import { useAppSelector } from '../../redux/hooks';
 import { selectIsSurveyTestMode } from '../../redux/generalSlice';
-import { storage } from '../../../App';
+import { AppNavigatorParamList, storage } from '../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
+import { Survey } from '../../data/types/survey.types.ts';
+import { SurveyNavigatorParamList } from '../../navigator/SurveyNavigator.tsx';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
+
+type SurveyEndScreenNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<SurveyNavigatorParamList, 'SurveyEndScreen'>,
+  NativeStackNavigationProp<AppNavigatorParamList>
+>;
+
+type SurveyEndScreenRouteProp = CompositeScreenProps<
+  NativeStackScreenProps<SurveyNavigatorParamList, 'SurveyEndScreen'>,
+  NativeStackScreenProps<AppNavigatorParamList, 'SurveyNavigator'>
+>;
 
 const SurveyEndScreen: () => React.JSX.Element = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<SurveyEndScreenNavigationProp>();
+  const route = useRoute<SurveyEndScreenRouteProp['route']>();
 
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);
 
   const fadeViewAnimation = useRef(new Animated.Value(0)).current;
 
   const [autoSync] = useMMKVStorage<boolean>('auto_sync', storage, false);
-  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurvey] = useMMKVStorage<Survey>('selected_survey', storage, {} as Survey);
 
   const saveAnswerSet = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const voting = route.params.voting;
     const startDate = new Date(selectedSurvey.startDate).getTime();
     const endDate = new Date(selectedSurvey.endDate).getTime();
@@ -31,7 +48,7 @@ const SurveyEndScreen: () => React.JSX.Element = () => {
       return;
     }
 
-    voting.date = new Date(voting.date);
+    voting.date = new Date(voting.date).toISOString();
 
     VotingSyncQueue.getInstance().addVoting(selectedSurvey._id, voting, autoSync);
   };

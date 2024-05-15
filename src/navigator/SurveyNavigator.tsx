@@ -4,9 +4,18 @@ import SurveyStartScreen from '../screens/survey/SurveyStartScreen';
 import SurveyQuestionScreen from '../screens/survey/SurveyQuestionScreen';
 import SurveyEndScreen from '../screens/survey/SurveyEndScreen';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
+import { Voting } from '../data/types/voting.types.ts';
+
+export type SurveyNavigatorParamList = {
+  SurveyStartScreen: undefined;
+  SurveyQuestionScreen: undefined;
+  SurveyEndScreen: {
+    voting: Voting;
+  };
+};
 
 const SurveyNavigator: () => React.JSX.Element = () => {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<SurveyNavigatorParamList>();
 
   useEffect(() => {
     console.log('[Lifecycle] Mount - SurveyNavigator');

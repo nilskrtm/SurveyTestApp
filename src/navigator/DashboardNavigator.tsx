@@ -6,8 +6,8 @@ import SettingsScreen from '../screens/dashboard/SettingsScreen';
 import DeviceControllerUtil from '../util/DeviceControllerUtil';
 import { useAppSelector } from '../redux/hooks';
 import { selectIsDeviceOwner, selectIsVotingsSyncing } from '../redux/generalSlice';
-import ChooseSurveyNavigator from './ChooseSurveyNavigator';
-import { useFocusEffect } from '@react-navigation/native';
+import ChooseSurveyNavigator, { ChooseSurveyNavigatorParamList } from './ChooseSurveyNavigator';
+import { NavigatorScreenParams, useFocusEffect } from '@react-navigation/native';
 import TimeUtil from '../util/TimeUtil';
 import { StyleProp, Text, TextStyle } from 'react-native';
 import VotingsScreen from '../screens/dashboard/VotingsScreen';
@@ -28,8 +28,15 @@ const HeaderRight: (props: { style?: StyleProp<TextStyle> | undefined }) => Reac
   return <Text style={props.style}>{dateString}</Text>;
 };
 
+export type DashboardNavigatorParamList = {
+  OverviewScreen: undefined;
+  VotingsScreen: undefined;
+  ChooseSurveyNavigator: NavigatorScreenParams<ChooseSurveyNavigatorParamList>;
+  SettingsScreen: undefined;
+};
+
 const DashboardNavigator: () => React.JSX.Element = () => {
-  const Tab = createBottomTabNavigator();
+  const Tab = createBottomTabNavigator<DashboardNavigatorParamList>();
 
   const isDeviceOwner: boolean = useAppSelector(selectIsDeviceOwner);
   const syncing: boolean = useAppSelector(selectIsVotingsSyncing);

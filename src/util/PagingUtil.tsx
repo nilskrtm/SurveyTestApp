@@ -1,5 +1,7 @@
+import { APIPaging } from '../data/types/common.types.ts';
+
 export default {
-  calculatePaging(requestPagingOptions: any, count: number) {
+  calculatePaging(requestPagingOptions: APIPaging & { offset: number }, count: number) {
     const offset: number = requestPagingOptions.perPage * (requestPagingOptions.page - 1);
     let lastPage: number = this.roundUp(count / requestPagingOptions.perPage, 0);
     const lastPageOffset: number = requestPagingOptions.perPage * (lastPage - 1);

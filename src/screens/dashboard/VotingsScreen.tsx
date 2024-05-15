@@ -13,16 +13,19 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import { SyncedVoting, useVotingQuery, VotingSyncJob } from '../../votings/VotingModels';
 import PagingUtil from '../../util/PagingUtil';
 import TimeUtil from '../../util/TimeUtil';
+import { APIPaging } from '../../data/types/common.types.ts';
 
 const PER_PAGE = 25;
+
+type PaginOptionsWithOffset = APIPaging & { offset: number };
 
 type VotingsScreenData = {
   dropdownOpen: boolean;
   loading: boolean;
   error: string;
   votingType: string;
-  pagingOptions: any;
-  data: any[];
+  pagingOptions: PaginOptionsWithOffset;
+  data: Array<VotingSyncJob | SyncedVoting>;
 };
 
 const VotingsScreen: () => React.JSX.Element = () => {
@@ -48,57 +51,67 @@ const VotingsScreen: () => React.JSX.Element = () => {
 
   const hasWarning = false;
 
-  const loadData = useCallback((votingType: string, newPagingOptions: any) => {
-    setState({ ...state, votingType: votingType, loading: true, error: '' });
+  const loadData: (votingType: string, newPagingOptions: PaginOptionsWithOffset) => void =
+    useCallback(
+      (votingType: string, newPagingOptions: PaginOptionsWithOffset) => {
+        setState({ ...state, votingType: votingType, loading: true, error: '' });
 
-    try {
-      if (votingType === 'open') {
-        const count: number = votingSyncJobs.length;
-        const paging: any = PagingUtil.calculatePaging(newPagingOptions, count);
+        try {
+          if (votingType === 'open') {
+            const count: number = votingSyncJobs.length;
+            const paging: PaginOptionsWithOffset = PagingUtil.calculatePaging(
+              newPagingOptions,
+              count
+            );
 
-        const data = votingSyncJobs
-          .sorted('number', true)
-          .slice(paging.offset, paging.offset + paging.perPage);
+            const data = votingSyncJobs
+              .sorted('number', true)
+              .slice(paging.offset, paging.offset + paging.perPage);
 
-        setState({
-          ...state,
-          votingType: votingType,
-          loading: false,
-          data: data,
-          pagingOptions: paging
-        });
+            setState({
+              ...state,
+              votingType: votingType,
+              loading: false,
+              data: data,
+              pagingOptions: paging
+            });
 
-        return;
-      }
+            return;
+          }
 
-      if (votingType === 'synced') {
-        const count: number = syncedVotings.length;
-        const paging: any = PagingUtil.calculatePaging(newPagingOptions, count);
-        const data = syncedVotings
-          .sorted('number', true)
-          .slice(paging.offset, paging.offset + paging.perPage);
+          if (votingType === 'synced') {
+            const count: number = syncedVotings.length;
+            const paging: PaginOptionsWithOffset = PagingUtil.calculatePaging(
+              newPagingOptions,
+              count
+            );
+            const data = syncedVotings
+              .sorted('number', true)
+              .slice(paging.offset, paging.offset + paging.perPage);
 
-        setState({
-          ...state,
-          votingType: votingType,
-          loading: false,
-          data: data,
-          pagingOptions: paging
-        });
+            setState({
+              ...state,
+              votingType: votingType,
+              loading: false,
+              data: data,
+              pagingOptions: paging
+            });
 
-        return;
-      }
-    } catch {
-      setState({
-        ...state,
-        votingType: votingType,
-        loading: false,
-        data: [],
-        error: 'Fehler beim Laden der Daten!'
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+            return;
+          }
+        } catch {
+          setState({
+            ...state,
+            votingType: votingType,
+            loading: false,
+            data: [],
+            error: 'Fehler beim Laden der Daten!'
+          });
+        }
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      []
+    );
 
   const toggleDropdown = () => {
     setState({ ...state, dropdownOpen: !state.dropdownOpen });
@@ -109,7 +122,10 @@ const VotingsScreen: () => React.JSX.Element = () => {
 
     loadData(type, {
       perPage: PER_PAGE,
-      page: 1
+      page: 1,
+      count: 0,
+      offset: 0,
+      lastPage: 0
     });
   };
 
@@ -128,7 +144,10 @@ const VotingsScreen: () => React.JSX.Element = () => {
 
     loadData('open', {
       perPage: PER_PAGE,
-      page: 1
+      page: 1,
+      count: 0,
+      offset: 0,
+      lastPage: 0
     });
 
     return () => {
@@ -244,7 +263,7 @@ const VotingsScreen: () => React.JSX.Element = () => {
                     </View>
                     <View style={styles.voteTextBox}>
                       <Text style={styles.voteText} numberOfLines={1}>
-                        {getVotingSyncJobState(object)}
+                        {getVotingSyncJobState(object as VotingSyncJob)}
                       </Text>
                     </View>
                   </>
@@ -262,7 +281,7 @@ const VotingsScreen: () => React.JSX.Element = () => {
                     </View>
                     <View style={styles.voteTextBox}>
                       <Text style={styles.voteText} numberOfLines={1}>
-                        {TimeUtil.getDateAsString(new Date(object.synced))}
+                        {TimeUtil.getDateAsString(new Date((object as SyncedVoting).synced))}
                       </Text>
                     </View>
                   </>

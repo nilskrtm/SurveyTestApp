@@ -10,6 +10,7 @@ import TimeUtil from '../../util/TimeUtil';
 import { SyncedVoting, useVotingQuery, VotingSyncJob } from '../../votings/VotingModels';
 import { Collection, CollectionChangeSet } from 'realm';
 import VotingSyncQueue from '../../votings/VotingSyncQueue';
+import { Survey } from '../../data/types/survey.types.ts';
 
 const OverviewScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
@@ -22,7 +23,11 @@ const OverviewScreen: () => React.JSX.Element = () => {
   const [syncedCount, setSyncedCount] = useState<number>(0);
 
   const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
-  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurvey] = useMMKVStorage<Survey | undefined>(
+    'selected_survey',
+    storage,
+    undefined
+  );
   const [selectedSurveyValid] = useMMKVStorage<boolean>('selected_survey_valid', storage, false);
 
   const syncing: boolean = useAppSelector(selectIsVotingsSyncing);
@@ -33,25 +38,21 @@ const OverviewScreen: () => React.JSX.Element = () => {
     warnings.push('Es ist keine Kiosk-Modus Pin eingerichtet.');
   }
 
-  if (selectedSurveyValid && selectedSurvey.draft) {
+  if (selectedSurveyValid && selectedSurvey && selectedSurvey.draft) {
     warnings.push(
       'Die Umfrage ist noch im Entwurf und könnte schon weiter bearbeitet worden sein.'
     );
   }
 
   const canTestSurvey = () => {
-    return (
-      kioskPin &&
-      selectedSurveyValid &&
-      Object.keys(selectedSurvey).length > 0 &&
-      selectedSurvey.questions.length > 0
-    );
+    return kioskPin && selectedSurveyValid && selectedSurvey && selectedSurvey.questions.length > 0;
   };
 
   const canStartSurvey = () => {
     return (
       kioskPin &&
       selectedSurveyValid &&
+      selectedSurvey &&
       Object.keys(selectedSurvey).length > 0 &&
       !selectedSurvey.draft
     );
@@ -118,7 +119,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.largeText} numberOfLines={1}>
-                  {selectedSurveyValid ? selectedSurvey.name : '-'}
+                  {selectedSurveyValid && selectedSurvey ? selectedSurvey.name : '-'}
                 </Text>
               </View>
             </View>
@@ -130,7 +131,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.normalText}>
-                  {selectedSurveyValid ? selectedSurvey.description : '-'}
+                  {selectedSurveyValid && selectedSurvey ? selectedSurvey.description : '-'}
                 </Text>
               </View>
             </View>
@@ -142,7 +143,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.normalText}>
-                  {selectedSurveyValid
+                  {selectedSurveyValid && selectedSurvey
                     ? TimeUtil.getDateAsString(new Date(selectedSurvey.startDate))
                     : 'XX.XX.XXXX XX.XX Uhr'}
                 </Text>
@@ -156,7 +157,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.normalText}>
-                  {selectedSurveyValid
+                  {selectedSurveyValid && selectedSurvey
                     ? TimeUtil.getDateAsString(new Date(selectedSurvey.endDate))
                     : 'XX.XX.XXXX XX.XX Uhr'}
                 </Text>
@@ -170,7 +171,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.normalText}>
-                  {selectedSurveyValid ? selectedSurvey.greeting : '-'}
+                  {selectedSurveyValid && selectedSurvey ? selectedSurvey.greeting : '-'}
                 </Text>
               </View>
             </View>
@@ -182,7 +183,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.generalInfoValueHolder}>
                 <Text style={styles.normalText}>
-                  {selectedSurveyValid
+                  {selectedSurveyValid && selectedSurvey
                     ? selectedSurvey.questions.length +
                       ' Frage' +
                       (selectedSurvey.questions.length === 1 ? '' : 'n')
@@ -191,7 +192,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
               </View>
             </View>
           </View>
-          {selectedSurveyValid && (
+          {selectedSurveyValid && selectedSurvey && (
             <View style={styles.badgeContainer}>
               {selectedSurvey.draft && (
                 <View style={[styles.badge, { backgroundColor: '#fb923c' }]}>

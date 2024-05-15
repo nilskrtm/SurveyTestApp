@@ -9,6 +9,8 @@ import { useMMKVStorage } from 'react-native-mmkv-storage';
 import { useAppDispatch } from '../redux/hooks';
 import { setIsSurveyTestMode } from '../redux/generalSlice';
 import VotingSyncQueue from '../votings/VotingSyncQueue';
+import { Survey } from '../data/types/survey.types.ts';
+import { AnswerPicturePaths } from '../data/types/answer.picture.types.ts';
 
 const BootScreen: () => React.JSX.Element = () => {
   const navigation = useNavigation();
@@ -20,9 +22,17 @@ const BootScreen: () => React.JSX.Element = () => {
   const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
   const [autoSync] = useMMKVStorage<boolean>('auto_sync', storage, false);
   const [syncPeriod] = useMMKVStorage<string>('sync_period', storage, '60');
-  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurvey] = useMMKVStorage<Survey | undefined>(
+    'selected_survey',
+    storage,
+    undefined
+  );
   const [selectedSurveyValid] = useMMKVStorage<boolean>('selected_survey_valid', storage, false);
-  const [answerPicturePaths] = useMMKVStorage<any>('answer_picture_paths', storage, {});
+  const [answerPicturePaths] = useMMKVStorage<AnswerPicturePaths>(
+    'answer_picture_paths',
+    storage,
+    {}
+  );
 
   useEffect(() => {
     console.log('[Lifecycle] Mount - BootScreen');
@@ -40,10 +50,7 @@ const BootScreen: () => React.JSX.Element = () => {
       setCurrentStep('Aktuelle Umfrage wird geprüft ...');
       await TimeUtil.sleep(1000);
 
-      if (
-        !selectedSurveyValid ||
-        (Object.keys(selectedSurvey).length === 0 && !answerPicturePaths)
-      ) {
+      if (!selectedSurveyValid || !selectedSurvey || Object.keys(answerPicturePaths).length === 0) {
         setWarning('Derzeit ist keine Umfrage ausgewählt.');
         await TimeUtil.sleep(3000);
         openDashboard();

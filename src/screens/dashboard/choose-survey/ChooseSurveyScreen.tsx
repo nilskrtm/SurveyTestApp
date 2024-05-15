@@ -7,68 +7,82 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
-import { useAuthAxios } from '../../../util/WebUtil';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { storage } from '../../../../App';
+import { AppNavigatorParamList, storage } from '../../../../App';
 import { useMMKVStorage } from 'react-native-mmkv-storage';
 import TimeUtil from '../../../util/TimeUtil';
-import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  CommonActions,
+  CompositeNavigationProp,
+  CompositeScreenProps,
+  useNavigation,
+  useRoute
+} from '@react-navigation/native';
+import { APIPaging } from '../../../data/types/common.types.ts';
+import { Survey } from '../../../data/types/survey.types.ts';
+import SurveyService from '../../../data/services/survey.service.ts';
+import { ChooseSurveyNavigatorParamList } from '../../../navigator/ChooseSurveyNavigator.tsx';
+import { DashboardNavigatorParamList } from '../../../navigator/DashboardNavigator.tsx';
+import { BottomTabNavigationProp, BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 
-type ChooseSurveyScreenData = {
-  loading: boolean;
-  error: string;
-  pagingOptions: any;
-  surveys: any[];
-};
+type ChooseSurveyScreenNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<ChooseSurveyNavigatorParamList, 'ChooseSurveyScreen'>,
+  CompositeNavigationProp<
+    BottomTabNavigationProp<DashboardNavigatorParamList, 'ChooseSurveyNavigator'>,
+    NativeStackNavigationProp<AppNavigatorParamList>
+  >
+>;
+
+type ChooseSurveyScreenRouteProp = CompositeScreenProps<
+  NativeStackScreenProps<ChooseSurveyNavigatorParamList, 'ChooseSurveyScreen'>,
+  CompositeScreenProps<
+    BottomTabScreenProps<DashboardNavigatorParamList, 'ChooseSurveyNavigator'>,
+    NativeStackScreenProps<AppNavigatorParamList, 'DashboardNavigator'>
+  >
+>;
 
 const ChooseSurveyScreen: () => React.JSX.Element = () => {
-  const authAxios = useAuthAxios();
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<ChooseSurveyScreenNavigationProp>();
+  const route = useRoute<ChooseSurveyScreenRouteProp['route']>();
 
   const [serverAddress] = useMMKVStorage<string>('server_address', storage, '');
   const [username] = useMMKVStorage<string>('username', storage, '');
   const [accessKey] = useMMKVStorage<string>('access_key', storage, '');
 
-  const [state, setState] = useState<ChooseSurveyScreenData>({
-    loading: true,
-    error: '',
-    pagingOptions: {
-      perPage: 0,
-      page: 1,
-      lastPage: 1,
-      count: 0
-    },
-    surveys: []
+  const [loader, setLoader] = useState<{ loading: boolean; error: string }>({
+    loading: false,
+    error: ''
   });
+  const [pagingOptions, setPagingOptions] = useState<APIPaging>({
+    perPage: 0,
+    page: 1,
+    lastPage: 1,
+    count: 0
+  });
+
+  const [surveys, setSurveys] = useState<Array<Survey>>([]);
 
   const hasWarning = !serverAddress || !username || !accessKey;
 
-  const loadSurveys = useCallback((newPagingOptions: any) => {
-    setState({ ...state, loading: true, error: '' });
+  const loadSurveys: (newPagingOptions: APIPaging) => void = useCallback<
+    (newPagingOptions: APIPaging) => void
+  >((newPagingOptions) => {
+    setLoader({ loading: true, error: '' });
 
-    authAxios
-      .get('/surveys?page=' + newPagingOptions.page)
-      .then((response) => {
-        setState({
-          ...state,
-          loading: false,
-          error: '',
-          surveys: response.data.surveys,
-          pagingOptions: response.data.paging
-        });
-      })
-      .catch(() => {
-        setState({
-          ...state,
-          loading: false,
-          error: 'Fehler beim Laden der Umfragen!'
-        });
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    SurveyService.getSurveys(newPagingOptions.page, 10).then((response) => {
+      if (response.success) {
+        setLoader({ loading: false, error: '' });
+        setPagingOptions(response.data.paging);
+        setSurveys(response.data.surveys);
+      } else {
+        console.log(response.error);
+        setLoader({ loading: false, error: 'Fehler beim Laden der Umfragen!' });
+      }
+    });
   }, []);
 
-  const selectSurvey = (surveyId: string) => {
+  const selectSurvey: (surveyId: string) => void = (surveyId) => {
     navigation.dispatch(
       CommonActions.reset({
         index: 2,
@@ -77,7 +91,7 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
             name: 'ChooseSurveySubmitScreen',
             params: {
               surveyId: surveyId,
-              lastPagingOptions: state.pagingOptions
+              lastPagingOptions: pagingOptions
             }
           }
         ]
@@ -94,9 +108,7 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
       parentNavigator.setOptions({ headerLeft: undefined });
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    loadSurveys(route?.params?.usePagingOptions || state.pagingOptions);
+    loadSurveys(route.params?.usePagingOptions || pagingOptions);
 
     return () => {
       console.log('[Lifecycle] Unmount - ChooseSurveyScreen');
@@ -120,19 +132,19 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
           style={styles.reloadButton}
           activeOpacity={0.6}
           underlayColor="#e3e3e3"
-          onPress={() => loadSurveys(state.pagingOptions)}
-          disabled={state.loading}>
+          onPress={() => loadSurveys(pagingOptions)}
+          disabled={loader.loading}>
           <IonIcons
             name="reload-circle-outline"
             size={30}
-            color={!state.loading ? '#6404ec' : '#505050'}
+            color={!loader.loading ? '#6404ec' : '#505050'}
           />
         </TouchableHighlight>
       </View>
-      {!state.loading && !state.error && state.surveys.length > 0 && (
+      {!loader.loading && !loader.error && surveys.length > 0 && (
         <>
           <ScrollView style={styles.scrollView}>
-            {state.surveys.map((survey, index) => (
+            {surveys.map((survey, index) => (
               <TouchableHighlight
                 key={'survey-' + survey._id}
                 activeOpacity={0.6}
@@ -214,65 +226,63 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
               activeOpacity={0.6}
               underlayColor="#ffffff"
               onPress={
-                state.pagingOptions.page === 1
+                pagingOptions.page === 1
                   ? undefined
                   : () => {
                       loadSurveys({
-                        ...state.pagingOptions,
-                        page: state.pagingOptions.page - 1
+                        ...pagingOptions,
+                        page: pagingOptions.page - 1
                       });
                     }
               }>
               <IonIcons
                 name="chevron-back-circle-outline"
                 size={36}
-                color={state.pagingOptions.page > 1 ? '#6404ec' : '#505050'}
+                color={pagingOptions.page > 1 ? '#6404ec' : '#505050'}
               />
             </TouchableHighlight>
             <Text style={styles.pagingText}>
-              Seite {state.pagingOptions.page} von {state.pagingOptions.lastPage}
+              Seite {pagingOptions.page} von {pagingOptions.lastPage}
             </Text>
             <TouchableHighlight
               style={styles.pagerBox}
               activeOpacity={0.6}
               underlayColor="#ffffff"
               onPress={
-                state.pagingOptions.page === state.pagingOptions.lastPage
+                pagingOptions.page === pagingOptions.lastPage
                   ? undefined
                   : () => {
                       loadSurveys({
-                        ...state.pagingOptions,
-                        page: state.pagingOptions.page + 1
+                        ...pagingOptions,
+                        page: pagingOptions.page + 1
                       });
                     }
               }>
               <IonIcons
                 name="chevron-forward-circle-outline"
                 size={36}
-                color={
-                  state.pagingOptions.page < state.pagingOptions.lastPage ? '#6404ec' : '#505050'
-                }
+                color={pagingOptions.page < pagingOptions.lastPage ? '#6404ec' : '#505050'}
               />
             </TouchableHighlight>
           </View>
         </>
       )}
-      {!state.loading && !state.error && state.surveys.length === 0 && (
+      {!loader.loading && !loader.error && surveys.length === 0 && (
         <View style={styles.infoErrorView}>
           <IonIcons name="information-circle-outline" size={40} color="#6404ec" />
           <Text style={styles.loadingText}>Es wurden keine Umfragen gefunden.</Text>
         </View>
       )}
-      {state.loading && !state.error && (
+      {loader.loading && !loader.error && (
         <View style={styles.infoErrorView}>
           <ActivityIndicator style={styles.spinner} size="large" color="#6404ec" />
           <Text style={styles.loadingText}>Umfragen werden geladen ...</Text>
         </View>
       )}
-      {!state.loading && state.error && (
+      {!loader.loading && loader.error && (
         <View style={styles.infoErrorView}>
           <IonIcons name="information-circle-outline" size={40} color="#ef4444" />
-          <Text style={styles.errorText}>{state.error}</Text>
+          <Text style={styles.errorText}>{loader.error}</Text>
         </View>
       )}
     </View>

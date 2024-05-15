@@ -16,7 +16,6 @@ const VotingSyncProvider: () => React.JSX.Element = () => {
     VotingSyncQueue.initialize();
 
     VotingSyncQueue.getInstance().setRealmProvider(() => realm);
-    VotingSyncQueue.getInstance().setAuthInstanceProvider(() => authInstance);
 
     const callbacks: CallbackObject[] = [];
 

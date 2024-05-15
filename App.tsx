@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import BootScreen from './src/screens/BootScreen';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MMKVLoader } from 'react-native-mmkv-storage';
-import DashboardNavigator from './src/navigator/DashboardNavigator';
-import SurveyNavigator from './src//navigator/SurveyNavigator';
+import DashboardNavigator, {
+  DashboardNavigatorParamList
+} from './src/navigator/DashboardNavigator';
+import SurveyNavigator, { SurveyNavigatorParamList } from './src//navigator/SurveyNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import store from './src/redux/store';
 import { Provider } from 'react-redux';
@@ -12,8 +14,14 @@ import DeviceControllerProvider from './src/provider/DeviceControllerProvider';
 import VotingSyncProvider from './src/provider/VotingSyncProvider';
 import { VotingRealmProvider } from './src/votings/VotingModels';
 
+export type AppNavigatorParamList = {
+  BootScreen: undefined;
+  DashboardNavigator: NavigatorScreenParams<DashboardNavigatorParamList>;
+  SurveyNavigator: NavigatorScreenParams<SurveyNavigatorParamList>;
+};
+
 const App: () => React.JSX.Element = () => {
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<AppNavigatorParamList>();
 
   useEffect(() => {
     console.log('[Lifecycle] Mount - App');
