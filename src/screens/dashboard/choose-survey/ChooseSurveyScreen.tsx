@@ -186,20 +186,20 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
                     </View>
                     <View style={styles.surveyBadgeContainer}>
                       {survey.draft && (
-                        <View style={[styles.badge, { backgroundColor: '#fb923c' }]}>
+                        <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
                           <Text style={styles.badgeText}>Entwurf</Text>
                         </View>
                       )}
                       {!survey.draft &&
                         new Date(survey.startDate).getTime() > new Date().getTime() && (
-                          <View style={[styles.badge, { backgroundColor: '#22c55e' }]}>
+                          <View style={[styles.badge, { backgroundColor: 'rgb(74 222 128)' }]}>
                             <Text style={styles.badgeText}>Bereit</Text>
                           </View>
                         )}
                       {!survey.draft &&
                         new Date(survey.startDate).getTime() <= new Date().getTime() &&
                         new Date(survey.endDate).getTime() > new Date().getTime() && (
-                          <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
+                          <View style={[styles.badge, { backgroundColor: 'rgb(74 222 128)' }]}>
                             <Text style={styles.badgeText}>Aktiv</Text>
                           </View>
                         )}
@@ -210,7 +210,7 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
                           </View>
                         )}
                       {survey.archived && (
-                        <View style={[styles.badge, { backgroundColor: '#9a3412' }]}>
+                        <View style={[styles.badge, { backgroundColor: 'rgb(251 146 60)' }]}>
                           <Text style={styles.badgeText}>Archiv</Text>
                         </View>
                       )}

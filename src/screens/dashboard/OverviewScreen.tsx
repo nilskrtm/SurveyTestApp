@@ -145,7 +145,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
                 <Text style={styles.normalText}>
                   {selectedSurveyValid && selectedSurvey
                     ? TimeUtil.getDateAsString(new Date(selectedSurvey.startDate))
-                    : 'XX.XX.XXXX XX.XX Uhr'}
+                    : '-'}
                 </Text>
               </View>
             </View>
@@ -159,7 +159,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
                 <Text style={styles.normalText}>
                   {selectedSurveyValid && selectedSurvey
                     ? TimeUtil.getDateAsString(new Date(selectedSurvey.endDate))
-                    : 'XX.XX.XXXX XX.XX Uhr'}
+                    : '-'}
                 </Text>
               </View>
             </View>
@@ -187,7 +187,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
                     ? selectedSurvey.questions.length +
                       ' Frage' +
                       (selectedSurvey.questions.length === 1 ? '' : 'n')
-                    : 'X Fragen'}
+                    : '-'}
                 </Text>
               </View>
             </View>
@@ -201,14 +201,14 @@ const OverviewScreen: () => React.JSX.Element = () => {
               )}
               {!selectedSurvey.draft &&
                 new Date(selectedSurvey.startDate).getTime() > new Date().getTime() && (
-                  <View style={[styles.badge, { backgroundColor: '#22c55e' }]}>
+                  <View style={[styles.badge, { backgroundColor: 'rgb(74 222 128)' }]}>
                     <Text style={styles.badgeText}>Bereit</Text>
                   </View>
                 )}
               {!selectedSurvey.draft &&
                 new Date(selectedSurvey.startDate).getTime() <= new Date().getTime() &&
                 new Date(selectedSurvey.endDate).getTime() > new Date().getTime() && (
-                  <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
+                  <View style={[styles.badge, { backgroundColor: 'rgb(74 222 128)' }]}>
                     <Text style={styles.badgeText}>Aktiv</Text>
                   </View>
                 )}
@@ -219,7 +219,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
                   </View>
                 )}
               {selectedSurvey.archived && (
-                <View style={[styles.badge, { backgroundColor: '#9a3412' }]}>
+                <View style={[styles.badge, { backgroundColor: 'rgb(251 146 60)' }]}>
                   <Text style={styles.badgeText}>Archiv</Text>
                 </View>
               )}

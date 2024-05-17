@@ -13,7 +13,6 @@ import {
   CommonActions,
   CompositeNavigationProp,
   CompositeScreenProps,
-  RouteProp,
   useFocusEffect,
   useNavigation,
   useRoute
@@ -356,20 +355,20 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
               </View>
               <View style={styles.surveyBadgeContainer}>
                 {state.survey.draft && (
-                  <View style={[styles.badge, { backgroundColor: '#fb923c' }]}>
+                  <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
                     <Text style={styles.badgeText}>Entwurf</Text>
                   </View>
                 )}
                 {!state.survey.draft &&
                   new Date(state.survey.startDate).getTime() > new Date().getTime() && (
-                    <View style={[styles.badge, { backgroundColor: '#22c55e' }]}>
+                    <View style={[styles.badge, { backgroundColor: 'rgb(74 222 128)' }]}>
                       <Text style={styles.badgeText}>Bereit</Text>
                     </View>
                   )}
                 {!state.survey.draft &&
                   new Date(state.survey.startDate).getTime() <= new Date().getTime() &&
                   new Date(state.survey.endDate).getTime() > new Date().getTime() && (
-                    <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
+                    <View style={[styles.badge, { backgroundColor: 'rgb(74 222 128)' }]}>
                       <Text style={styles.badgeText}>Aktiv</Text>
                     </View>
                   )}
@@ -380,7 +379,7 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
                     </View>
                   )}
                 {state.survey.archived && (
-                  <View style={[styles.badge, { backgroundColor: '#9a3412' }]}>
+                  <View style={[styles.badge, { backgroundColor: 'rgb(251 146 60)' }]}>
                     <Text style={styles.badgeText}>Archiv</Text>
                   </View>
                 )}
@@ -403,7 +402,7 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
                 {state.survey.greeting}
               </Text>
             </View>
-            {state.survey.questions.map((question: any, index: number) => (
+            {state.survey.questions.map((question, index: number) => (
               <View key={'question' + question._id} style={styles.questionContainer}>
                 <Text style={styles.question} numberOfLines={1}>
                   <Text style={{ fontWeight: '500' }}>Frage {index + 1} - </Text>
@@ -418,22 +417,20 @@ const ChooseSurveySubmitScreen: () => React.JSX.Element = () => {
                 </Text>
                 {question.answerOptions.length > 0 && (
                   <View style={styles.answerOptionsContainer}>
-                    {question.answerOptions.map(
-                      (answerOptionObject: any, answerOptionIndex: number) => {
-                        if (answerOptionObject.picture.url) {
-                          return (
-                            <Image
-                              key={answerOptionObject._id + '-' + answerOptionIndex}
-                              style={styles.answerPicture}
-                              resizeMode="contain"
-                              source={{
-                                uri: answerOptionObject.picture.url
-                              }}
-                            />
-                          );
-                        }
+                    {question.answerOptions.map((answerOptionObject, answerOptionIndex: number) => {
+                      if (answerOptionObject.picture.url) {
+                        return (
+                          <Image
+                            key={answerOptionObject._id + '-' + answerOptionIndex}
+                            style={styles.answerPicture}
+                            resizeMode="contain"
+                            source={{
+                              uri: answerOptionObject.picture.url
+                            }}
+                          />
+                        );
                       }
-                    )}
+                    })}
                   </View>
                 )}
               </View>
