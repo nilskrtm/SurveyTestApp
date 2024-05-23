@@ -2,6 +2,10 @@ name: Push - Build
 
 on:
   push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
 
 jobs:
   build-android:
