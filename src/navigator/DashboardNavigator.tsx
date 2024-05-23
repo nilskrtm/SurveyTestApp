@@ -89,7 +89,7 @@ const DashboardNavigator: () => React.JSX.Element = () => {
           backgroundColor: '#6404ec'
         },
         headerTintColor: '#FFFFFF',
-        headerTitle: 'GBU-SmartData',
+        headerTitle: 'Dashboard',
         tabBarActiveTintColor: '#6404ec',
         tabBarInactiveTintColor: '#000000',
         tabBarLabelStyle: {
