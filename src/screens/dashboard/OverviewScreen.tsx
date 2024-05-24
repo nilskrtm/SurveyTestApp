@@ -195,7 +195,7 @@ const OverviewScreen: () => React.JSX.Element = () => {
           {selectedSurveyValid && selectedSurvey && (
             <View style={styles.badgeContainer}>
               {selectedSurvey.draft && (
-                <View style={[styles.badge, { backgroundColor: '#fb923c' }]}>
+                <View style={[styles.badge, { backgroundColor: '#6404ec' }]}>
                   <Text style={styles.badgeText}>Entwurf</Text>
                 </View>
               )}
