@@ -25,10 +25,17 @@ class API {
 
     this.client.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
-        const serverHost = storage.getString('server_address') || '';
+        let serverHost = storage.getString('server_address') || '';
         const username = storage.getString('username') || '';
         const accessKey = storage.getString('access_key') || '';
         const token = base64.encode(`${username}:${accessKey}`);
+
+        if (
+          !serverHost.toLowerCase().startsWith('http://') &&
+          !serverHost.toLowerCase().startsWith('https://')
+        ) {
+          serverHost = 'https://' + serverHost;
+        }
 
         config.headers.Authorization = `Basic ${token}`;
         config.url = serverHost + config.url;
