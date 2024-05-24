@@ -6,6 +6,7 @@ import { useMMKVStorage } from 'react-native-mmkv-storage';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import { useAppSelector } from '../redux/hooks';
 import { selectIsVotingsSyncing, selectIsSurveyTestMode } from '../redux/generalSlice';
+import { Survey } from '../data/types/survey.types.ts';
 
 type SurveyOverlayProps = {
   onPinSuccess: () => void;
@@ -17,7 +18,11 @@ const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) 
   const [pinDialogTimer, setPinDialogTimer] = useState<ReturnType<typeof setTimeout>>();
 
   const [kioskPin] = useMMKVStorage<string>('kiosk_pin', storage, '');
-  const [selectedSurvey] = useMMKVStorage<any>('selected_survey', storage, {});
+  const [selectedSurvey] = useMMKVStorage<Survey | undefined>(
+    'selected_survey',
+    storage,
+    undefined
+  );
   const [selectedSurveyValid] = useMMKVStorage<boolean>('selected_survey_valid', storage, false);
 
   const testMode: boolean = useAppSelector(selectIsSurveyTestMode);
@@ -28,7 +33,7 @@ const SurveyOverlay: (props: SurveyOverlayProps) => React.JSX.Element = (props) 
       return 'Testmodus';
     }
 
-    if (selectedSurveyValid) {
+    if (selectedSurvey && selectedSurveyValid) {
       const currentDate = new Date().getTime();
       const startDate = new Date(selectedSurvey.startDate).getTime();
       const endDate = new Date(selectedSurvey.endDate).getTime();
