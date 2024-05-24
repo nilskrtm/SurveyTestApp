@@ -14,14 +14,14 @@ class CustomDeviceAdmin : DeviceAdminReceiver() {
     override fun onEnabled(context: Context, intent: Intent) {
         super.onEnabled(context, intent)
 
-        Toast.makeText(context, "Die App wurde zum Geräte Admin gemacht.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Die App wurde zum Geräte-Admin gemacht.", Toast.LENGTH_LONG).show()
         NativeModuleHelper.dispatchEvent(DeviceControllerModule.getStaticReactContext(), "DeviceAdminEnabledEvent", Arguments.createMap())
     }
 
     override fun onDisabled(context: Context, intent: Intent) {
         super.onDisabled(context, intent)
 
-        Toast.makeText(context, "Die App wurde als Geräte Admin entfernt.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Die App wurde als Geräte-Admin entfernt.", Toast.LENGTH_LONG).show()
         NativeModuleHelper.dispatchEvent(DeviceControllerModule.getStaticReactContext(), "DeviceAdminDisabledEvent", Arguments.createMap())
     }
 

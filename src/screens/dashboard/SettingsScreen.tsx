@@ -50,7 +50,7 @@ function SettingsScreen(): React.JSX.Element {
 
   if (!isDeviceOwner) {
     warnings.push(
-      'Der Kiosk-Modus funktioniert voraussichtlich nur eingeschränkt, weil die App kein Geräte Admin ist.'
+      'Der Kiosk-Modus funktioniert voraussichtlich nur eingeschränkt, weil die App kein Geräte-Admin ist.'
     );
   }
 
@@ -221,9 +221,14 @@ function SettingsScreen(): React.JSX.Element {
             setEditSyncPeriod(text.replace(/[^0-9]/g, ''));
           }}
         />
-        <SettingCategory label="Geräte Administration" />
+        <SettingCategory label="Geräte-Administration" />
         <SettingDummyBox
-          title="Geräte Admin entfernen"
+          title="Geräte-Einstellungen öffnen"
+          icon="settings"
+          onPress={() => DeviceControllerUtil.openDeviceSettings()}
+        />
+        <SettingDummyBox
+          title="Geräte-Admin entfernen"
           disabled={!isDeviceOwner}
           icon="remove-circle"
           onPress={() => setDeviceOwnerDialogOpen(true)}
@@ -232,9 +237,9 @@ function SettingsScreen(): React.JSX.Element {
           visible={deviceOwnerDialogOpen}
           onBackdropPress={undefined}
           onRequestClose={undefined}>
-          <Dialog.Title>Geräte Admin entfernen</Dialog.Title>
+          <Dialog.Title>Geräte-Admin entfernen</Dialog.Title>
           <Dialog.Description>
-            Soll die App wirklich als Geräte Admin entfernt werden?{'\n\n\n'}
+            Soll die App wirklich als Geräte-Admin entfernt werden?{'\n\n\n'}
             <Text style={styles.redText}>
               Der Kiosk-Modus wird danach NICHT mehr richtig funktionieren.
             </Text>

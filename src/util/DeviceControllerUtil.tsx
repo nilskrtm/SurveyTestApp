@@ -18,6 +18,9 @@ export default {
   async clearDeviceOwner(): Promise<boolean> {
     return await DeviceControllerModule.clearDeviceOwner();
   },
+  openDeviceSettings(): void {
+    return DeviceControllerModule.openDeviceSettings();
+  },
   getEventEmitter(): NativeEventEmitter {
     return new NativeEventEmitter(DeviceControllerModule);
   }

@@ -1,6 +1,7 @@
 package com.surveytestapp
 
-import com.facebook.react.bridge.Callback
+import android.content.Intent
+import android.provider.Settings
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -55,6 +56,11 @@ class DeviceControllerModule(reactContext: ReactApplicationContext) : ReactConte
     @ReactMethod
     fun isLockTaskActive(promise: Promise) {
         promise.resolve(DeviceController.isLockTaskActive(currentActivity))
+    }
+
+    @ReactMethod
+    fun openDeviceSettings() {
+        currentActivity?.startActivityForResult(Intent(Settings.ACTION_SETTINGS), 0);
     }
 
     @ReactMethod
