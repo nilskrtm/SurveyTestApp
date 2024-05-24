@@ -1,4 +1,4 @@
-name: Push
+name: Release
 
 on:
   push:
@@ -32,10 +32,12 @@ jobs:
       - name: Set up Keystore
         run: |
           cd android
-          echo APP_RELEASE_STORE_FILE=ci.keystore >> gradle.properties
-          echo APP_RELEASE_KEY_ALIAS=ci-key-alias >> gradle.properties
-          echo APP_RELEASE_STORE_PASSWORD=${{ secrets.APP_CI_RELEASE_STORE_PASSWORD  }} >> gradle.properties
-          echo APP_RELEASE_KEY_PASSWORD=${{ secrets.APP_CI_RELEASE_KEY_PASSWORD  }} >> gradle.properties
+          echo "${{ secrets.APP_RELEASE_RELEASE_KEYSTORE }}" > release.keystore.asc
+          gpg -d --passphrase ${{ secrets.APP_RELEASE_RELEASE_KEYSTORE_PASSPHRASE }} --batch release.keystore.asc > app/release.keystore
+          echo APP_RELEASE_STORE_FILE=release.keystore >> gradle.properties
+          echo APP_RELEASE_KEY_ALIAS=release-key-alias >> gradle.properties
+          echo APP_RELEASE_STORE_PASSWORD=${{ secrets.APP_RELEASE_RELEASE_STORE_PASSWORD  }} >> gradle.properties
+          echo APP_RELEASE_KEY_PASSWORD=${{ secrets.APP_RELEASE_RELEASE_KEY_PASSWORD  }} >> gradle.properties
           cd ..
       - name: Build Android App
         run: |
