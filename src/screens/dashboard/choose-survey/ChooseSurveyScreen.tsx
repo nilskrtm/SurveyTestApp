@@ -76,7 +76,6 @@ const ChooseSurveyScreen: () => React.JSX.Element = () => {
         setPagingOptions(response.data.paging);
         setSurveys(response.data.surveys);
       } else {
-        console.log(response.error);
         setLoader({ loading: false, error: 'Fehler beim Laden der Umfragen!' });
       }
     });

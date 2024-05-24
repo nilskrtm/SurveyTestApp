@@ -160,13 +160,15 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     zIndex: 999999,
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
+    backgroundColor: 'transparent',
     color: 'transparent'
   },
   hiddenButton: {
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
+    backgroundColor: 'transparent',
     color: 'transparent'
   }
 });
