@@ -17,7 +17,7 @@
     "@react-navigation/native-stack": "^6.9.26",
     "@realm/react": "^0.6.2",
     "@reduxjs/toolkit": "^2.2.2",
-    "axios": "^1.6.8",
+    "axios": "^1.7.4",
     "base-64": "^1.0.0",
     "promise-reflect": "^1.1.0",
     "react": "18.2.0",
