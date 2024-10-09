@@ -50,4 +50,5 @@ The generated .apk-File can than be installed on the desired device.
 - the queue for synchronizing the votes is rather poorly implemented, in the best case this work should be converted into a native Android component so that it runs properly in the background; the current state of its implementation is not necessarily React-friendly
 - check the lock task setup (for the kiosk mode)
     - are there more features that should be disabled to be a 'real' kiosk mode?
+- upgrade to eslint 9
 - ...
